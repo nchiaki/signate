@@ -154,22 +154,21 @@ print("読みたて=====")
 
 train = train.dropna()
 
-#train_len = len(train)
-#ix = 0
-#while ix < train_len:
-#    if train.iloc[ix]['horsepower'] == '?':
-#        train.drop(index=ix, inplace=True)
-#        train_len = train_len - 1
-#    else:
-#        ix = ix + 1
-#print(train.shape)
-#print(train.info())
-#print("horsepower ? 行削除=====")
-
-#train['horsepower'] = train['horsepower'].apply(lambda train: train.replace('?', '1.0')).astype('float64')
-#print(train.shape)
-#print(train.info())
-#print("horsepower行　型変換=====")
+train_len = len(train)
+ix = 0
+while ix < train_len:
+    if train.iloc[ix]['horsepower'] == '?':
+        train.drop(index=ix, inplace=True)
+        train_len = train_len - 1
+    else:
+        ix = ix + 1
+print(train.shape)
+print(train.info())
+print("horsepower ? 行削除=====")
+train['horsepower'] = train['horsepower'].apply(lambda train: train.replace('?', '1.0')).astype('float64')
+print(train.shape)
+print(train.info())
+print("horsepower行型変換=====")
 
 train = train.drop(columns=['id'])
 print(train.shape)
@@ -252,8 +251,7 @@ test = test.dropna()
 #        test_len = test_len - 1
 #    else:
 #        ix = ix + 1
-
-#test['horsepower'] = test['horsepower'].apply(lambda test: test.replace('?', '0.0')).astype('float64')
+#test['horsepower'] = test['horsepower'].apply(lambda test: test.replace('?', '1.0')).astype('float64')
 #print(test.shape)
 #print(test.info())
 #print("test drop nan & horsepower ? =====")
