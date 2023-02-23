@@ -65,6 +65,7 @@ def get_mpg_by_displacement(trainlst, displacement):
         test_mpg = 0
 
     return test_mpg
+# End of get_mpg_by_displacement
 
 
 # get_mpg_by_weght(trainlst, weght)
@@ -112,7 +113,29 @@ def get_mpg_by_weght(trainlst, weght):
         test_mpg = 0
 
     return test_mpg
-# End of get_mpg
+# End of get_mpg_by_weght
+
+def print_heatmap(year, trainlist):
+    # mpg:燃費、cylinders:気筒、displacement:排気量、horsepower:馬力、weight:重量、acceleration:加速性能、model year:年式、origin:、 car name:車名
+    list_corr = trainlist.corr()
+    sns.heatmap(list_corr, annot=True, cmap='Blues')
+    plt.show()
+    # 横軸に weight、縦軸にmpgを割り当て散布図を描画する
+    plt.scatter(trainlist['weight'], trainlist['mpg'])
+    plt.xlabel('weight')
+    plt.ylabel('mpg')
+    plt.show()
+    # 横軸に displacement、縦軸にmpgを割り当て散布図を描画する
+    plt.scatter(trainlist['displacement'], trainlist['mpg'])
+    plt.xlabel('displacement')
+    plt.ylabel('mpg')
+    plt.show()
+    # 横軸に displacement weight ratio, 縦軸にmpgを割り当て散布図を描画する
+    plt.scatter(trainlist['displacement weight ratio'], trainlist['mpg'])
+    plt.xlabel('displacement weight ratio')
+    plt.ylabel('mpg')
+    plt.show()
+# End of print_heatmap
 
 id_list = []
 mpg_list = []
@@ -156,8 +179,8 @@ print("id 削除=====")
 #pwrwgtratio =  train['weight'] / train['horsepower']
 #train['power weight ratio'] = pwrwgtratio
 
-#dsplcmntwgtratio =  train['weight'] / train['displacement']
-#train['displacement weight ratio'] = dsplcmntwgtratio
+dsplcmntwgtratio =  train['weight'] / train['displacement']
+train['displacement weight ratio'] = dsplcmntwgtratio
 
 #pwrdsplcmntratio =  train['power weight ratio'] / train['displacement weight ratio']
 #train['power displacement ratio'] = pwrdsplcmntratio
@@ -167,20 +190,11 @@ print(train.shape)
 print(train.info())
 print("ipower weight ratio 追加=====")
 
-# mpg:燃費、cylinders:気筒、displacement:排気量、horsepower:馬力、weight:重量、acceleration:加速性能、model year:年式、origin:、 car name:車名
-train_corr = train.corr()
-sns.heatmap(train_corr, annot=True, cmap='Blues')
-plt.show()
+print_heatmap(0, train)
 
-# 横軸に weight、縦軸にmpgを割り当て散布図を描画する
-plt.scatter(train['weight'], train['mpg'])
-plt.xlabel('weight')
-plt.ylabel('mpg')
-plt.show()
-
-# 横軸に displacement、縦軸にmpgを割り当て散布図を描画する
-plt.scatter(train['displacement'], train['mpg'])
-plt.xlabel('displacement')
+# 横軸に acceleration, 縦軸にmpgを割り当て散布図を描画する
+plt.scatter(train['acceleration'], train['mpg'])
+plt.xlabel('acceleration')
 plt.ylabel('mpg')
 plt.show()
 
@@ -202,24 +216,12 @@ plt.show()
 #plt.ylabel('mpg')
 #plt.show()
 
-# 横軸に displacement weight ratio, 縦軸にmpgを割り当て散布図を描画する
-#plt.scatter(train['displacement weight ratio'], train['mpg'])
-#plt.xlabel('displacement weight ratio')
-#plt.ylabel('mpg')
-#plt.show()
-
 # 横軸に power displacement ratio, 縦軸にmpgを割り当て散布図を描画する
 #plt.scatter(train['power displacement ratio'], train['mpg'])
 #plt.xlabel('power displacement ratio')
 #plt.ylabel('mpg')
 #plt.show()
 
-
-# 横軸に acceleration, 縦軸にmpgを割り当て散布図を描画する
-plt.scatter(train['acceleration'], train['mpg'])
-plt.xlabel('acceleration')
-plt.ylabel('mpg')
-plt.show()
 
 # 横軸に origin, 縦軸にmpgを割り当て散布図を描画する
 plt.scatter(train['origin'], train['mpg'])
@@ -260,6 +262,8 @@ test = test.dropna()
 # そのtrainのデータから、mpgを推測する
 # trainに同名/同年式の車がない場合、異名/同年式の車のデータを取得し、そこから同年式の車のmpgを推測する
 # trainに同名/同年式、異名/同年式の車も無い場合、testの車の車重±10kgの範囲のmpgの平均値を推測する
+checked_year = []
+mpg_coff_list = {}
 len_test = len(test)
 print("test X ", len_test)
 ix = 0
@@ -275,10 +279,40 @@ while ix < len_test:
     mpg_displacement_test = 0.0
 
     train_by_carname_year = train.loc[(train['car name'] == carname_test) & (train['model year'] == year_test)]
+    train_by_year = train.loc[train['model year'] == year_test]
+
+    store_year = 0
+    if (len(checked_year) == 0):
+        checked_year.append(year_test)
+        store_year = 1
+    elif year_test not in checked_year:
+        checked_year.append(year_test)
+        store_year = 1
+    if store_year == 1:
+        list_corr = train_by_year.corr()
+        print(year_test, "年式の車の相関係数")
+        print(list_corr)
+        list_mpg = list_corr['mpg']
+        print("mpg X weight: ", list_mpg['weight'])
+        print("mpg X displacement: ", list_mpg['displacement'])
+        print("mpg X displacement weight ratio: ", list_mpg['displacement weight ratio'])
+        cff = [-1*list_mpg['weight'], -1*list_mpg['displacement'], list_mpg['displacement weight ratio']]
+        maxidx = cff.index(max(cff))
+        if (maxidx == 0):
+            print("mpg X weightの相関係数が最大")
+            mpg_coff_list["{year_test}"] = 0
+        elif (maxidx == 1):
+            print("mpg X displacementの相関係数が最大")
+            mpg_coff_list["{year_test}"] = 1
+        else:
+            print("mpg X displacement weight ratioの相関係数が最大")
+            mpg_coff_list["{year_test}"] = 2
+        #print_heatmap(year_test, train_by_year)
+
     len_train_by_carname_year = len(train_by_carname_year)
     if (len_train_by_carname_year <= 2):
         # 同名/同年式の車が2台以下の場合、異名/同年式の車のデータを取得する
-        train_by_year = train.loc[train['model year'] == year_test]
+        #train_by_year = train.loc[train['model year'] == year_test]
         if (len(train_by_year) == 0):
             # 同年式の車が無い場合、車重±10kgの範囲のmpgの平均値を推測する
             train_by_weight = train.loc[(train['weight'] >= (weight_test - 10.0)) & (train['weight'] <= (weight_test + 10.0))]
@@ -293,14 +327,26 @@ while ix < len_test:
                 print("test_mpg Average by Weight: ", mpg_test)
         else:
             # 同年式の車がある場合、その車のmpgと車重からtestの車のmpgを推測する
-            mpg_weight_test = get_mpg_by_weght(train_by_year, weight_test)
-            mpg_displacement_test = get_mpg_by_displacement(train_by_year, displacement_test)
-            mpg_test = (mpg_weight_test + mpg_displacement_test) / 2
+            if (mpg_coff_list["{year_test}"] == 0):
+                mpg_test = get_mpg_by_weght(train_by_year, weight_test)
+            elif (mpg_coff_list["{year_test}"] == 1):
+                mpg_test = get_mpg_by_displacement(train_by_year, displacement_test)
+            else:
+                mpg_test = 0
+            #mpg_weight_test = get_mpg_by_weght(train_by_year, weight_test)
+            #mpg_displacement_test = get_mpg_by_displacement(train_by_year, displacement_test)
+            #mpg_test = (mpg_weight_test + mpg_displacement_test) / 2
     else:
         # 同名/同年式の車がある場合、その車のmpgと車重からmpgを推測する
-        mpg_weight_test = get_mpg_by_weght(train_by_carname_year, weight_test)
-        mpg_displacement_test = get_mpg_by_displacement(train_by_carname_year, displacement_test)
-        mpg_test = (mpg_weight_test + mpg_displacement_test) / 2
+        if (mpg_coff_list["{year_test}"] == 0):
+            mpg_test = get_mpg_by_weght(train_by_carname_year, weight_test)
+        elif (mpg_coff_list["{year_test}"] == 1):
+            mpg_test = get_mpg_by_displacement(train_by_carname_year, displacement_test)
+        else:
+            mpg_test = 0
+        #mpg_weight_test = get_mpg_by_weght(train_by_carname_year, weight_test)
+        #mpg_displacement_test = get_mpg_by_displacement(train_by_carname_year, displacement_test)
+        #mpg_test = (mpg_weight_test + mpg_displacement_test) / 2
 
     print(id_test, ": mpg_test = ", mpg_test, "w: ", mpg_weight_test, "d: ", mpg_displacement_test, "\n")
     id_list.append(id_test)
