@@ -4,15 +4,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import csv
 
-# get_mpg(trainlst, weght)
+# get_mpg_value(trainlst)
 # trainlst: train.tsvから読み込んだデータフレーム
-# weght: 重量
-# 戻り値: 燃費
-# trainlst内のmpgと車重の割合を計算し、その結果、weghtに最も近い値を持つ行のmpgを返す
-def get_mpg(trainlst, weght):
-    train_mpg = trainlst['mpg']
-    mpg_max = train_mpg.max()
-    mpg_min = train_mpg.min()
+# 戻り値: 燃費の幅
+def get_mpg_value(trainlst, train_mpg, mpg_max, mpg_min):
+    #train_mpg = trainlst['mpg']
     #print("mpg_max: ", mpg_max)
     #print("mpg_min: ", mpg_min)
     train_mpg2 = train_mpg.drop(train_mpg[train_mpg == mpg_max].index)
@@ -22,6 +18,65 @@ def get_mpg(trainlst, weght):
     print("mpg_max2: ", mpg_max)
     print("mpg_min2: ", mpg_min)
     mpg_term = (mpg_max - mpg_min)
+    return mpg_term
+
+# get_mpg_by_displacement(trainlst, displacement)
+# trainlst: train.tsvから読み込んだデータフレーム
+# displacement: 排気量
+# 戻り値: 燃費
+# trainlst内のmpgと排気量の割合を計算し、その結果、displacement に最も近い値を持つ行のmpgを返す
+def get_mpg_by_displacement(trainlst, displacement):
+    train_mpg = trainlst['mpg']
+    mpg_max = train_mpg.max()
+    mpg_min = train_mpg.min()
+    mpg_term = get_mpg_value(trainlst, train_mpg, mpg_max, mpg_min)
+
+    train_displacement = trainlst['displacement']
+    displacement_max = train_displacement.max()
+    displacement_min = train_displacement.min()
+    #print("displacement_max: ", displacement_max)
+    #print("displacement_min: ", displacement_min)
+    train_displacement2 = train_displacement.drop(train_displacement[train_displacement == displacement_max].index)
+    train_displacement2 = train_displacement2.drop(train_displacement2[train_displacement == displacement_min].index)
+    displacement_max = train_displacement2.max()
+    displacement_min = train_displacement2.min()
+    print("displacement_max2: ", displacement_max)
+    print("displacement_min2: ", displacement_min)
+    displacement_term = (displacement_max - displacement_min)
+
+    print("mpg_term: ", mpg_term)
+    print("displacement_term: ", displacement_term)
+
+    mpgdisplacement_ratio = mpg_term / displacement_term
+    test_displacement = displacement
+    if displacement_min <= test_displacement <= displacement_max:
+        test_displacement = test_displacement - displacement_min
+        test_mpg = mpg_max - (test_displacement * mpgdisplacement_ratio)
+        print("test_mpg at in-range displacement: ", test_mpg)
+    elif test_displacement < displacement_min:
+        test_displacement = displacement_min - test_displacement
+        test_mpg = mpg_max + (test_displacement * mpgdisplacement_ratio)
+        print("test_mpg in lighter than minimum displacement: ", test_mpg)
+    elif test_displacement > displacement_max:
+        test_displacement = test_displacement - displacement_max
+        test_mpg = mpg_min - (test_displacement * mpgdisplacement_ratio)
+        print("test_mpg in heavier than maximum displacement: ", test_mpg)
+    else:
+        test_mpg = 0
+
+    return test_mpg
+
+
+# get_mpg_by_weght(trainlst, weght)
+# trainlst: train.tsvから読み込んだデータフレーム
+# weght: 重量
+# 戻り値: 燃費
+# trainlst内のmpgと車重の割合を計算し、その結果、weghtに最も近い値を持つ行のmpgを返す
+def get_mpg_by_weght(trainlst, weght):
+    train_mpg = trainlst['mpg']
+    mpg_max = train_mpg.max()
+    mpg_min = train_mpg.min()
+    mpg_term = get_mpg_value(trainlst, train_mpg, mpg_max, mpg_min)
 
     train_weight = trainlst['weight']
     weight_max = train_weight.max()
@@ -87,12 +142,11 @@ train = train.dropna()
 #print(train.shape)
 #print(train.info())
 #print("horsepower ? 行削除=====")
-#
-#train['horsepower'] = train['horsepower'].apply(lambda train: train.replace('?', '0.0')).astype('float64')
+
+#train['horsepower'] = train['horsepower'].apply(lambda train: train.replace('?', '1.0')).astype('float64')
 #print(train.shape)
 #print(train.info())
 #print("horsepower行　型変換=====")
-
 
 train = train.drop(columns=['id'])
 print(train.shape)
@@ -104,6 +158,7 @@ print("id 削除=====")
 
 #dsplcmntwgtratio =  train['weight'] / train['displacement']
 #train['displacement weight ratio'] = dsplcmntwgtratio
+
 #pwrdsplcmntratio =  train['power weight ratio'] / train['displacement weight ratio']
 #train['power displacement ratio'] = pwrdsplcmntratio
 
@@ -195,6 +250,7 @@ test = test.dropna()
 #        test_len = test_len - 1
 #    else:
 #        ix = ix + 1
+
 #test['horsepower'] = test['horsepower'].apply(lambda test: test.replace('?', '0.0')).astype('float64')
 #print(test.shape)
 #print(test.info())
@@ -212,7 +268,11 @@ while ix < len_test:
     carname_test = test.iloc[ix]['car name']
     year_test = test.iloc[ix]['model year']
     weight_test = test.iloc[ix]['weight']
-    print(id_test, carname_test, year_test, weight_test)
+    displacement_test = test.iloc[ix]['displacement']
+    print(id_test, carname_test, year_test, weight_test, displacement_test)
+
+    mpg_weight_test = 0.0
+    mpg_displacement_test = 0.0
 
     train_by_carname_year = train.loc[(train['car name'] == carname_test) & (train['model year'] == year_test)]
     len_train_by_carname_year = len(train_by_carname_year)
@@ -233,12 +293,16 @@ while ix < len_test:
                 print("test_mpg Average by Weight: ", mpg_test)
         else:
             # 同年式の車がある場合、その車のmpgと車重からtestの車のmpgを推測する
-            mpg_test = get_mpg(train_by_year, weight_test)
+            mpg_weight_test = get_mpg_by_weght(train_by_year, weight_test)
+            mpg_displacement_test = get_mpg_by_displacement(train_by_year, displacement_test)
+            mpg_test = (mpg_weight_test + mpg_displacement_test) / 2
     else:
         # 同名/同年式の車がある場合、その車のmpgと車重からmpgを推測する
-        mpg_test = get_mpg(train_by_carname_year, weight_test)
+        mpg_weight_test = get_mpg_by_weght(train_by_carname_year, weight_test)
+        mpg_displacement_test = get_mpg_by_displacement(train_by_carname_year, displacement_test)
+        mpg_test = (mpg_weight_test + mpg_displacement_test) / 2
 
-    print(id_test, ": mpg_test = ", mpg_test, "\n")
+    print(id_test, ": mpg_test = ", mpg_test, "w: ", mpg_weight_test, "d: ", mpg_displacement_test, "\n")
     id_list.append(id_test)
     mpg_list.append(round(mpg_test, 1))
 
