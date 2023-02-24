@@ -10,6 +10,10 @@ import csv
 # 戻り値: 燃費
 # trainlst内のmpgと車重の割合を計算し、その結果、weghtに最も近い値を持つ行のmpgを返す
 def get_mpg(trainlst, weght):
+    # trainlst内のweightで同値の行は1行にまとめる。
+    # その際、mpgの平均値を適用する 
+    trainlst = trainlst.groupby('weight').mean().reset_index()
+
     train_mpg = trainlst['mpg']
     mpg_max = train_mpg.max()
     mpg_min = train_mpg.min()
@@ -216,9 +220,11 @@ while ix < len_test:
 
     train_by_carname_year = train.loc[(train['car name'] == carname_test) & (train['model year'] == year_test)]
     len_train_by_carname_year = len(train_by_carname_year)
+    print("train_by_carname_year X ", len_train_by_carname_year)
     if (len_train_by_carname_year <= 2):
         # 同名/同年式の車が2台以下の場合、異名/同年式の車のデータを取得する
         train_by_year = train.loc[train['model year'] == year_test]
+        print("train_by_year X ", len(train_by_year))
         if (len(train_by_year) == 0):
             # 同年式の車が無い場合、車重±10kgの範囲のmpgの平均値を推測する
             train_by_weight = train.loc[(train['weight'] >= (weight_test - 10.0)) & (train['weight'] <= (weight_test + 10.0))]
