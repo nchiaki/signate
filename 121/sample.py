@@ -26,6 +26,8 @@ def get_mpg_value(trainlst, train_mpg, mpg_max, mpg_min):
 # 戻り値: 燃費
 # trainlst内のmpgと排気量の割合を計算し、その結果、displacement に最も近い値を持つ行のmpgを返す
 def get_mpg_by_displacement(trainlst, displacement):
+    trainlst = trainlst.groupby('displacement').mean().reset_index()
+
     train_mpg = trainlst['mpg']
     mpg_max = train_mpg.max()
     mpg_min = train_mpg.min()
@@ -74,6 +76,8 @@ def get_mpg_by_displacement(trainlst, displacement):
 # 戻り値: 燃費
 # trainlst内のmpgと車重の割合を計算し、その結果、weghtに最も近い値を持つ行のmpgを返す
 def get_mpg_by_weght(trainlst, weght):
+    trainlst = trainlst.groupby('weight').mean().reset_index()
+
     train_mpg = trainlst['mpg']
     mpg_max = train_mpg.max()
     mpg_min = train_mpg.min()
@@ -280,75 +284,72 @@ while ix < len_test:
     train_by_carname_year = train.loc[(train['car name'] == carname_test) & (train['model year'] == year_test)]
     train_by_year = train.loc[train['model year'] == year_test]
 
-    len_train_all = len(train_all)
-    if len_train_all > 2:
-        mpg_weght_test = get_mpg_by_weght(train_all, weight_test)
-        mpg_displacement_test = get_mpg_by_displacement(train_all, displacement_test)
-        mpg_test = (mpg_weght_test + mpg_displacement_test) / 2
-        print(id_test, ": mpg_test = ", mpg_test, "\n")
-    else:
-        store_year = 0
-        if (len(checked_year) == 0):
-            checked_year.append(year_test)
-            store_year = 1
-        elif year_test not in checked_year:
-            checked_year.append(year_test)
-            store_year = 1
-        if store_year == 1:
-            list_corr = train_by_year.corr()
-            print(year_test, "年式の車の相関係数")
-            print(list_corr)
-            list_mpg = list_corr['mpg']
-            print("mpg X weight: ", list_mpg['weight'])
-            print("mpg X displacement: ", list_mpg['displacement'])
-            print("mpg X displacement weight ratio: ", list_mpg['displacement weight ratio'])
-            cff = [-1*list_mpg['weight'], -1*list_mpg['displacement'], list_mpg['displacement weight ratio']]
-            maxidx = cff.index(max(cff))
-            if (maxidx == 0):
-                print("mpg X weightの相関係数が最大")
-                mpg_coff_list["{year_test}"] = 0
-            elif (maxidx == 1):
-                print("mpg X displacementの相関係数が最大")
-                mpg_coff_list["{year_test}"] = 1
-            else:
-                print("mpg X displacement weight ratioの相関係数が最大")
-                mpg_coff_list["{year_test}"] = 2
-            #print_heatmap(year_test, train_by_year)
-
-        len_train_by_carname_year = len(train_by_carname_year)
-        if (len_train_by_carname_year <= 2):
-            # 同名/同年式の車が2台以下の場合、異名/同年式の車のデータを取得する
-            #train_by_year = train.loc[train['model year'] == year_test]
-            if (len(train_by_year) == 0):
-                # 同年式の車が無い場合、車重±10kgの範囲のmpgの平均値を推測する
-                train_by_weight = train.loc[(train['weight'] >= (weight_test - 10.0)) & (train['weight'] <= (weight_test + 10.0))]
-                print("train_by_weight X ", len(train_by_weight))
-                if (len(train_by_weight) == 0):
-                    # 車重±10kgの範囲の車が無い場合、testの車のmpgを0とする
-                    mpg_test = 0
-                    print("No test_mpg")
-                else:
-                    # 車重±10kgの範囲の車がある場合、その車のmpgの平均値を推測する
-                    mpg_test = train_by_weight['mpg'].mean()
-                    print("test_mpg Average by Weight: ", mpg_test)
-            else:
-                # 同年式の車がある場合、その車のmpgと車重からtestの車のmpgを推測する
-                if (mpg_coff_list["{year_test}"] == 0):
-                    mpg_test = get_mpg_by_weght(train_by_year, weight_test)
-                elif (mpg_coff_list["{year_test}"] == 1):
-                    mpg_test = get_mpg_by_displacement(train_by_year, displacement_test)
-                else:
-                    mpg_test = 0
+    store_year = 0
+    if (len(checked_year) == 0):
+        checked_year.append(year_test)
+        store_year = 1
+    elif year_test not in checked_year:
+        checked_year.append(year_test)
+        store_year = 1
+    if store_year == 1:
+        list_corr = train_by_year.corr()
+        print(year_test, "年式の車の相関係数")
+        print(list_corr)
+        list_mpg = list_corr['mpg']
+        print("mpg X weight: ", list_mpg['weight'])
+        print("mpg X displacement: ", list_mpg['displacement'])
+        print("mpg X displacement weight ratio: ", list_mpg['displacement weight ratio'])
+        cff = [-1*list_mpg['weight'], -1*list_mpg['displacement'], list_mpg['displacement weight ratio']]
+        maxidx = cff.index(max(cff))
+        if (maxidx == 0):
+            print("mpg X weightの相関係数が最大")
+            mpg_coff_list["{year_test}"] = 0
+        elif (maxidx == 1):
+            print("mpg X displacementの相関係数が最大")
+            mpg_coff_list["{year_test}"] = 1
         else:
-            # 同名/同年式の車がある場合、その車のmpgと車重からmpgを推測する
-            if (mpg_coff_list["{year_test}"] == 0):
-                mpg_test = get_mpg_by_weght(train_by_carname_year, weight_test)
-            elif (mpg_coff_list["{year_test}"] == 1):
-                mpg_test = get_mpg_by_displacement(train_by_carname_year, displacement_test)
-            else:
-                mpg_test = 0
+            print("mpg X displacement weight ratioの相関係数が最大")
+            mpg_coff_list["{year_test}"] = 2
+        #print_heatmap(year_test, train_by_year)
 
-        print(id_test, ": mpg_test = ", mpg_test, "w: ", mpg_weight_test, "d: ", mpg_displacement_test, "\n")
+    len_train_by_carname_year = len(train_by_carname_year)
+    if (len_train_by_carname_year <= 2):
+        # 同名/同年式の車が2台以下の場合、異名/同年式の車のデータを取得する
+        #train_by_year = train.loc[train['model year'] == year_test]
+        if (len(train_by_year) == 0):
+            # 同年式の車が無い場合、車重±10kgの範囲のmpgの平均値を推測する
+            train_by_weight = train.loc[(train['weight'] >= (weight_test - 10.0)) & (train['weight'] <= (weight_test + 10.0))]
+            print("train_by_weight X ", len(train_by_weight))
+            if (len(train_by_weight) == 0):
+                # 車重±10kgの範囲の車が無い場合、testの車のmpgを0とする
+                mpg_test = 0
+                print("No test_mpg")
+            else:
+                # 車重±10kgの範囲の車がある場合、その車のmpgの平均値を推測する
+                mpg_test = train_by_weight['mpg'].mean()
+                print("test_mpg Average by Weight: ", mpg_test)
+        else:
+            # 同年式の車がある場合、その車のmpgと車重からtestの車のmpgを推測する
+            if (mpg_coff_list["{year_test}"] == 0):
+                mpg_test = get_mpg_by_weght(train_by_year, weight_test)
+            elif (mpg_coff_list["{year_test}"] == 1):
+                mpg_test = get_mpg_by_displacement(train_by_year, displacement_test)
+            else:
+                mpg_test_weight = get_mpg_by_weght(train_by_year, weight_test)
+                mpg_test_displacement = get_mpg_by_displacement(train_by_year, displacement_test)
+                mpg_test = (mpg_test_weight + mpg_test_displacement) / 2
+    else:
+        # 同名/同年式の車がある場合、その車のmpgと車重からmpgを推測する
+        if (mpg_coff_list["{year_test}"] == 0):
+            mpg_test = get_mpg_by_weght(train_by_carname_year, weight_test)
+        elif (mpg_coff_list["{year_test}"] == 1):
+            mpg_test = get_mpg_by_displacement(train_by_carname_year, displacement_test)
+        else:
+            mpg_test_weight = get_mpg_by_weght(train_by_carname_year, weight_test)
+            mpg_test_displacement = get_mpg_by_displacement(train_by_carname_year, displacement_test)
+            mpg_test = (mpg_test_weight + mpg_test_displacement) / 2
+
+    print(id_test, ": mpg_test = ", mpg_test, "w: ", mpg_weight_test, "d: ", mpg_displacement_test, "\n")
 
     id_list.append(id_test)
     mpg_list.append(round(mpg_test, 1))
