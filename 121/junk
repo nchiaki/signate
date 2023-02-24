@@ -1,0 +1,824 @@
+
+0
+60
+(199, 10)
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 199 entries, 0 to 198
+Data columns (total 10 columns):
+ #   Column        Non-Null Count  Dtype  
+---  ------        --------------  -----  
+ 0   id            199 non-null    int64  
+ 1   mpg           199 non-null    float64
+ 2   cylinders     199 non-null    int64  
+ 3   displacement  199 non-null    float64
+ 4   horsepower    199 non-null    object 
+ 5   weight        199 non-null    float64
+ 6   acceleration  199 non-null    float64
+ 7   model year    199 non-null    int64  
+ 8   origin        199 non-null    int64  
+ 9   car name      199 non-null    object 
+dtypes: float64(4), int64(4), object(2)
+memory usage: 15.7+ KB
+None
+読みたて=====
+(195, 10)
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 195 entries, 0 to 198
+Data columns (total 10 columns):
+ #   Column        Non-Null Count  Dtype  
+---  ------        --------------  -----  
+ 0   id            195 non-null    int64  
+ 1   mpg           195 non-null    float64
+ 2   cylinders     195 non-null    int64  
+ 3   displacement  195 non-null    float64
+ 4   horsepower    195 non-null    object 
+ 5   weight        195 non-null    float64
+ 6   acceleration  195 non-null    float64
+ 7   model year    195 non-null    int64  
+ 8   origin        195 non-null    int64  
+ 9   car name      195 non-null    object 
+dtypes: float64(4), int64(4), object(2)
+memory usage: 16.8+ KB
+None
+horsepower ? 行削除=====
+(195, 10)
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 195 entries, 0 to 198
+Data columns (total 10 columns):
+ #   Column        Non-Null Count  Dtype  
+---  ------        --------------  -----  
+ 0   id            195 non-null    int64  
+ 1   mpg           195 non-null    float64
+ 2   cylinders     195 non-null    int64  
+ 3   displacement  195 non-null    float64
+ 4   horsepower    195 non-null    float64
+ 5   weight        195 non-null    float64
+ 6   acceleration  195 non-null    float64
+ 7   model year    195 non-null    int64  
+ 8   origin        195 non-null    int64  
+ 9   car name      195 non-null    object 
+dtypes: float64(5), int64(4), object(1)
+memory usage: 16.8+ KB
+None
+horsepower行　型変換=====
+(195, 9)
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 195 entries, 0 to 198
+Data columns (total 9 columns):
+ #   Column        Non-Null Count  Dtype  
+---  ------        --------------  -----  
+ 0   mpg           195 non-null    float64
+ 1   cylinders     195 non-null    int64  
+ 2   displacement  195 non-null    float64
+ 3   horsepower    195 non-null    float64
+ 4   weight        195 non-null    float64
+ 5   acceleration  195 non-null    float64
+ 6   model year    195 non-null    int64  
+ 7   origin        195 non-null    int64  
+ 8   car name      195 non-null    object 
+dtypes: float64(5), int64(3), object(1)
+memory usage: 15.2+ KB
+None
+id 削除=====
+(195, 10)
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 195 entries, 0 to 198
+Data columns (total 10 columns):
+ #   Column              Non-Null Count  Dtype  
+---  ------              --------------  -----  
+ 0   mpg                 195 non-null    float64
+ 1   cylinders           195 non-null    int64  
+ 2   displacement        195 non-null    float64
+ 3   horsepower          195 non-null    float64
+ 4   weight              195 non-null    float64
+ 5   acceleration        195 non-null    float64
+ 6   model year          195 non-null    int64  
+ 7   origin              195 non-null    int64  
+ 8   car name            195 non-null    object 
+ 9   power weight ratio  195 non-null    float64
+dtypes: float64(6), int64(3), object(1)
+memory usage: 16.8+ KB
+None
+ipower weight ratio 追加=====
+(199, 9)
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 199 entries, 0 to 198
+Data columns (total 9 columns):
+ #   Column        Non-Null Count  Dtype  
+---  ------        --------------  -----  
+ 0   id            199 non-null    int64  
+ 1   cylinders     199 non-null    int64  
+ 2   displacement  199 non-null    float64
+ 3   horsepower    199 non-null    object 
+ 4   weight        199 non-null    float64
+ 5   acceleration  199 non-null    float64
+ 6   model year    199 non-null    int64  
+ 7   origin        199 non-null    int64  
+ 8   car name      199 non-null    object 
+dtypes: float64(3), int64(4), object(2)
+memory usage: 14.1+ KB
+None
+test 読みたて=====
+(197, 9)
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 197 entries, 0 to 198
+Data columns (total 9 columns):
+ #   Column        Non-Null Count  Dtype  
+---  ------        --------------  -----  
+ 0   id            197 non-null    int64  
+ 1   cylinders     197 non-null    int64  
+ 2   displacement  197 non-null    float64
+ 3   horsepower    197 non-null    float64
+ 4   weight        197 non-null    float64
+ 5   acceleration  197 non-null    float64
+ 6   model year    197 non-null    int64  
+ 7   origin        197 non-null    int64  
+ 8   car name      197 non-null    object 
+dtypes: float64(4), int64(4), object(1)
+memory usage: 15.4+ KB
+None
+test drop nan & horsepower ? =====
+volvo diesel
+ford granada
+datsun 510 hatchback
+amc hornet sportabout (sw)
+toyota corolla 1600 (sw)
+audi 100 ls
+dodge coronet brougham
+buick skylark
+pontiac sunbird coupe
+amc concord
+chrysler newport royal
+toyota corolla liftback
+pontiac catalina
+===>  59    toyota corolla
+Name: car name, dtype: object  <===
+ford escort 2h
+dodge d100
+===>  76    peugeot 504
+Name: car name, dtype: object  <===
+mercedes benz 300d
+===>  77    ford gran torino (sw)
+Name: car name, dtype: object  <===
+train test X 1:
+     mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin               car name  power weight ratio
+77  14.0          8         302.0       140.0  4638.0          16.0          74       1  ford gran torino (sw)           33.128571
+    id  cylinders  displacement  horsepower  weight  acceleration  model year  origin               car name
+18  30          8         302.0       140.0  4294.0          16.0          72       1  ford gran torino (sw)
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                        car name  power weight ratio
+15   26.0          4          96.0        69.0  2189.0          18.0          72       2                 renault 12 (sw)           31.724638
+44   22.0          4         122.0        86.0  2395.0          16.0          72       1                 ford pinto (sw)           27.848837
+46   13.0          8         350.0       165.0  4274.0          12.0          72       1                chevrolet impala           25.903030
+64   23.0          4         120.0        97.0  2506.0          14.5          72       3     toyouta corona mark ii (sw)           25.835052
+99   14.0          8         318.0       150.0  4077.0          14.0          72       1  plymouth satellite custom (sw)           27.180000
+103  20.0          4         140.0        90.0  2408.0          19.5          72       1                  chevrolet vega           26.755556
+118  12.0          8         350.0       160.0  4456.0          13.5          72       1      oldsmobile delta 88 royale           27.850000
+124  23.0          4          97.0        54.0  2254.0          23.5          72       2               volkswagen type 3           41.740741
+126  18.0          4         121.0       112.0  2933.0          14.5          72       2                 volvo 145e (sw)           26.187500
+153  13.0          8         350.0       155.0  4502.0          13.5          72       1            buick lesabre custom           29.045161
+154  28.0          4          97.0        92.0  2288.0          17.0          72       3                 datsun 510 (sw)           24.869565
+187  15.0          8         318.0       150.0  4135.0          13.5          72       1               plymouth fury iii           27.566667
+188  24.0          4         113.0        95.0  2278.0          15.5          72       3           toyota corona hardtop           23.978947
+mpg_max2:  26.0
+mpg_min2:  13.0
+weight_max2:  4456.0
+weight_min2:  2254.0
+mpg_term:  13.0
+weight_term:  2202.0
+test_mpg:  13.95640326975477
+datsun b210
+===>  110    opel manta
+Name: car name, dtype: object  <===
+train test X 1:
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin    car name  power weight ratio
+110  26.0          4          97.0        78.0  2300.0          14.5          74       2  opel manta           29.487179
+    id  cylinders  displacement  horsepower  weight  acceleration  model year  origin    car name
+20  34          4         116.0        75.0  2158.0          15.5          73       2  opel manta
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                   car name  power weight ratio
+7    11.0          8         350.0       180.0  3664.0          11.0          73       1           oldsmobile omega           20.355556
+14   18.0          6         232.0       100.0  2945.0          16.0          73       1                 amc hornet           29.450000
+20   19.0          4         122.0        85.0  2310.0          18.5          73       1                 ford pinto           27.176471
+34   24.0          4         121.0       110.0  2660.0          14.0          73       2                  saab 99le           24.181818
+51   16.0          6         250.0       100.0  3278.0          18.0          73       1      chevrolet nova custom           32.780000
+56   13.0          8         360.0       175.0  3821.0          11.0          73       1    amc ambassador brougham           21.834286
+81   15.0          8         318.0       150.0  3777.0          12.5          73       1       dodge coronet custom           25.180000
+107  19.0          4         121.0       112.0  2868.0          15.5          73       2                volvo 144ea           25.607143
+121  21.0          4         140.0        72.0  2401.0          19.5          73       1             chevrolet vega           33.347222
+132  15.0          8         350.0       145.0  4082.0          13.0          73       1    chevrolet monte carlo s           28.151724
+136  20.0          6         156.0       122.0  2807.0          13.5          73       3             toyota mark ii           23.008197
+150  18.0          6         232.0       100.0  2789.0          15.0          73       1                amc gremlin           27.890000
+184  11.0          8         400.0       150.0  4997.0          14.0          73       1           chevrolet impala           33.313333
+192  13.0          8         400.0       150.0  4464.0          12.0          73       1  chevrolet caprice classic           29.760000
+198  26.0          4          98.0        90.0  2265.0          15.5          73       2       fiat 124 sport coupe           25.166667
+mpg_max2:  24.0
+mpg_min2:  13.0
+weight_max2:  4464.0
+weight_min2:  2310.0
+mpg_term:  11.0
+weight_term:  2154.0
+test_mpg:  24.77623026926648
+vw rabbit c (diesel)
+dodge dart custom
+ford country squire (sw)
+buick estate wagon (sw)
+pontiac catalina brougham
+amc matador (sw)
+===>  150    amc gremlin
+162    amc gremlin
+193    amc gremlin
+Name: car name, dtype: object  <===
+buick skylark
+volkswagen rabbit
+honda civic cvcc
+plymouth duster
+===>  96    honda civic
+Name: car name, dtype: object  <===
+chrysler new yorker brougham
+plymouth duster
+chevrolet cavalier wagon
+datsun b210 gx
+plymouth valiant custom
+===>  5    pontiac phoenix
+Name: car name, dtype: object  <===
+train test X 1:
+    mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin         car name  power weight ratio
+5  27.0          4         151.0        90.0  2735.0          18.0          82       1  pontiac phoenix           30.388889
+    id  cylinders  displacement  horsepower  weight  acceleration  model year  origin         car name
+38  73          4         151.0        90.0  2556.0          13.2          79       1  pontiac phoenix
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                           car name  power weight ratio
+1    31.9          4          89.0        71.0  1925.0          14.0          79       2                   vw rabbit custom           27.112676
+9    18.2          8         318.0       135.0  3830.0          15.2          79       1                    dodge st. regis           28.370370
+23   17.0          8         305.0       130.0  3840.0          15.4          79       1          chevrolet caprice classic           29.538462
+25   19.8          6         200.0        85.0  2990.0          18.2          79       1                   mercury zephyr 6           35.176471
+47   20.6          6         225.0       110.0  3360.0          16.6          79       1                      dodge aspen 6           30.545455
+89   31.8          4          85.0        65.0  2020.0          19.2          79       3                         datsun 210           31.076923
+95   16.5          8         351.0       138.0  3955.0          13.2          79       1              mercury grand marquis           28.659420
+98   34.5          4         105.0        70.0  2150.0          14.9          79       1               plymouth horizon tc3           30.714286
+109  28.4          4         151.0        90.0  2670.0          16.0          79       1              buick skylark limited           29.666667
+133  17.6          8         302.0       129.0  3725.0          13.4          79       1                    ford ltd landau           28.875969
+177  23.9          8         260.0        90.0  3420.0          22.2          79       1  oldsmobile cutlass salon brougham           38.000000
+181  21.5          6         231.0       115.0  3245.0          15.4          79       1                  pontiac lemans v6           28.217391
+190  27.4          4         121.0        80.0  2670.0          15.0          79       1                      amc spirit dl           33.375000
+mpg_max2:  31.9
+mpg_min2:  17.0
+weight_max2:  3840.0
+weight_min2:  2020.0
+mpg_term:  14.899999999999999
+weight_term:  1820.0
+test_mpg:  27.51186813186813
+vw pickup
+oldsmobile vista cruiser
+volkswagen rabbit
+===>  76    peugeot 504
+Name: car name, dtype: object  <===
+===>  119    fiat 128
+Name: car name, dtype: object  <===
+train test X 1:
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin  car name  power weight ratio
+119  24.0          4          90.0        75.0  2108.0          15.5          74       2  fiat 128           28.106667
+    id  cylinders  displacement  horsepower  weight  acceleration  model year  origin  car name
+43  85          4          68.0        49.0  1867.0          19.5          73       2  fiat 128
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                   car name  power weight ratio
+7    11.0          8         350.0       180.0  3664.0          11.0          73       1           oldsmobile omega           20.355556
+14   18.0          6         232.0       100.0  2945.0          16.0          73       1                 amc hornet           29.450000
+20   19.0          4         122.0        85.0  2310.0          18.5          73       1                 ford pinto           27.176471
+34   24.0          4         121.0       110.0  2660.0          14.0          73       2                  saab 99le           24.181818
+51   16.0          6         250.0       100.0  3278.0          18.0          73       1      chevrolet nova custom           32.780000
+56   13.0          8         360.0       175.0  3821.0          11.0          73       1    amc ambassador brougham           21.834286
+81   15.0          8         318.0       150.0  3777.0          12.5          73       1       dodge coronet custom           25.180000
+107  19.0          4         121.0       112.0  2868.0          15.5          73       2                volvo 144ea           25.607143
+121  21.0          4         140.0        72.0  2401.0          19.5          73       1             chevrolet vega           33.347222
+132  15.0          8         350.0       145.0  4082.0          13.0          73       1    chevrolet monte carlo s           28.151724
+136  20.0          6         156.0       122.0  2807.0          13.5          73       3             toyota mark ii           23.008197
+150  18.0          6         232.0       100.0  2789.0          15.0          73       1                amc gremlin           27.890000
+184  11.0          8         400.0       150.0  4997.0          14.0          73       1           chevrolet impala           33.313333
+192  13.0          8         400.0       150.0  4464.0          12.0          73       1  chevrolet caprice classic           29.760000
+198  26.0          4          98.0        90.0  2265.0          15.5          73       2       fiat 124 sport coupe           25.166667
+mpg_max2:  24.0
+mpg_min2:  13.0
+weight_max2:  4464.0
+weight_min2:  2310.0
+mpg_term:  11.0
+weight_term:  2154.0
+test_mpg:  26.26230269266481
+peugeot 504 (sw)
+mazda glc custom
+plymouth horizon miser
+plymouth duster
+audi 5000
+toyota carina
+oldsmobile starfire sx
+===>  105    toyota corona
+142    toyota corona
+Name: car name, dtype: object  <===
+dodge colt hatchback custom
+===>  149    plymouth valiant
+Name: car name, dtype: object  <===
+train test X 1:
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin          car name  power weight ratio
+149  22.0          6         225.0       100.0  3233.0          15.4          76       1  plymouth valiant               32.33
+     id  cylinders  displacement  horsepower  weight  acceleration  model year  origin          car name
+53  106          6         225.0       105.0  3121.0          16.5          73       1  plymouth valiant
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                   car name  power weight ratio
+7    11.0          8         350.0       180.0  3664.0          11.0          73       1           oldsmobile omega           20.355556
+14   18.0          6         232.0       100.0  2945.0          16.0          73       1                 amc hornet           29.450000
+20   19.0          4         122.0        85.0  2310.0          18.5          73       1                 ford pinto           27.176471
+34   24.0          4         121.0       110.0  2660.0          14.0          73       2                  saab 99le           24.181818
+51   16.0          6         250.0       100.0  3278.0          18.0          73       1      chevrolet nova custom           32.780000
+56   13.0          8         360.0       175.0  3821.0          11.0          73       1    amc ambassador brougham           21.834286
+81   15.0          8         318.0       150.0  3777.0          12.5          73       1       dodge coronet custom           25.180000
+107  19.0          4         121.0       112.0  2868.0          15.5          73       2                volvo 144ea           25.607143
+121  21.0          4         140.0        72.0  2401.0          19.5          73       1             chevrolet vega           33.347222
+132  15.0          8         350.0       145.0  4082.0          13.0          73       1    chevrolet monte carlo s           28.151724
+136  20.0          6         156.0       122.0  2807.0          13.5          73       3             toyota mark ii           23.008197
+150  18.0          6         232.0       100.0  2789.0          15.0          73       1                amc gremlin           27.890000
+184  11.0          8         400.0       150.0  4997.0          14.0          73       1           chevrolet impala           33.313333
+192  13.0          8         400.0       150.0  4464.0          12.0          73       1  chevrolet caprice classic           29.760000
+198  26.0          4          98.0        90.0  2265.0          15.5          73       2       fiat 124 sport coupe           25.166667
+mpg_max2:  24.0
+mpg_min2:  13.0
+weight_max2:  4464.0
+weight_min2:  2310.0
+mpg_term:  11.0
+weight_term:  2154.0
+test_mpg:  19.858402971216343
+ford fairmont futura
+===>  68    ford gran torino
+Name: car name, dtype: object  <===
+===>  36     amc matador
+185    amc matador
+Name: car name, dtype: object  <===
+renault 5 gtl
+amc matador (sw)
+oldsmobile cutlass supreme
+amc ambassador sst
+===>  59    toyota corolla
+Name: car name, dtype: object  <===
+ford ranger
+ford torino
+ford fairmont 4
+plymouth fury gran sedan
+mazda glc 4
+ford mustang gl
+ford granada ghia
+chevrolet monte carlo
+mazda rx-7 gs
+===>  59    toyota corolla
+Name: car name, dtype: object  <===
+ford f250
+fiat strada custom
+maxda rx3
+ford maverick
+chevrolet malibu
+pontiac grand prix
+chevrolet malibu classic (sw)
+===>  37    subaru dl
+Name: car name, dtype: object  <===
+train test X 1:
+     mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin   car name  power weight ratio
+37  33.8          4          97.0        67.0  2145.0          18.0          80       3  subaru dl           32.014925
+     id  cylinders  displacement  horsepower  weight  acceleration  model year  origin   car name
+80  155          4          97.0        67.0  1985.0          16.4          77       3  subaru dl
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                      car name  power weight ratio
+21   15.0          8         302.0       130.0  4295.0          14.9          77       1       mercury cougar brougham           33.038462
+30   31.5          4          98.0        68.0  2045.0          18.5          77       3             honda accord cvcc           30.073529
+61   21.5          4         121.0       110.0  2600.0          12.8          77       2                      bmw 320i           23.636364
+67   15.5          8         350.0       170.0  4165.0          11.4          77       1  chevrolet monte carlo landau           24.500000
+92   25.5          4         122.0        96.0  2300.0          15.5          77       1             plymouth arrow gs           23.958333
+97   30.5          4          97.0        78.0  2190.0          14.1          77       2             volkswagen dasher           28.076923
+106  15.5          8         318.0       145.0  4140.0          13.7          77       1         dodge monaco brougham           28.551724
+114  22.0          6         146.0        97.0  2815.0          14.5          77       3                    datsun 810           29.020619
+117  33.5          4          85.0        70.0  1945.0          16.8          77       3         datsun f-10 hatchback           27.785714
+125  16.0          8         351.0       149.0  4335.0          14.5          77       1              ford thunderbird           29.093960
+134  30.5          4          98.0        63.0  2051.0          17.0          77       1            chevrolet chevette           32.555556
+152  25.5          4         140.0        89.0  2755.0          15.8          77       1           ford mustang ii 2+2           30.955056
+171  21.5          3          80.0       110.0  2720.0          13.5          77       3                    mazda rx-4           24.727273
+182  17.5          8         305.0       145.0  3880.0          12.5          77       1     chevrolet caprice classic           26.758621
+mpg_max2:  31.5
+mpg_min2:  15.5
+weight_max2:  4295.0
+weight_min2:  2045.0
+mpg_term:  16.0
+weight_term:  2250.0
+test_mpg:  31.926666666666666
+maxda glc deluxe
+plymouth sapporo
+===>  129    chevrolet citation
+146    chevrolet citation
+Name: car name, dtype: object  <===
+===>  20     ford pinto
+45     ford pinto
+166    ford pinto
+175    ford pinto
+Name: car name, dtype: object  <===
+datsun 310 gx
+plymouth volare custom
+cadillac eldorado
+===>  170    plymouth fury iii
+187    plymouth fury iii
+Name: car name, dtype: object  <===
+chevrolet chevelle concours (sw)
+===>  34    saab 99le
+Name: car name, dtype: object  <===
+train test X 1:
+     mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin   car name  power weight ratio
+34  24.0          4         121.0       110.0  2660.0          14.0          73       2  saab 99le           24.181818
+     id  cylinders  displacement  horsepower  weight  acceleration  model year  origin   car name
+90  173          4         121.0       115.0  2671.0          13.5          75       2  saab 99le
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                   car name  power weight ratio
+6    16.0          6         250.0       105.0  3897.0          18.5          75       1  chevroelt chevelle malibu           37.114286
+36   15.0          6         258.0       110.0  3730.0          19.0          75       1                amc matador           33.909091
+39   23.0          4         140.0        78.0  2592.0          18.5          75       1              pontiac astro           33.230769
+45   23.0          4         140.0        83.0  2639.0          17.0          75       1                 ford pinto           31.795181
+60   25.0          4          90.0        71.0  2223.0          16.5          75       2          volkswagen dasher           31.309859
+63   14.0          8         351.0       148.0  4657.0          13.5          75       1                   ford ltd           31.466216
+76   23.0          4         120.0        88.0  2957.0          17.0          75       2                peugeot 504           33.602273
+79   19.0          6         232.0        90.0  3211.0          17.0          75       1                  amc pacer           35.677778
+108  18.0          6         250.0       105.0  3459.0          16.0          75       1             chevrolet nova           32.942857
+128  17.0          6         231.0       110.0  3907.0          21.0          75       1              buick century           35.518182
+139  20.0          8         262.0       110.0  3221.0          13.5          75       1        chevrolet monza 2+2           29.281818
+142  24.0          4         134.0        96.0  2702.0          13.5          75       3              toyota corona           28.145833
+147  21.0          6         231.0       110.0  3039.0          15.0          75       1              buick skyhawk           27.627273
+162  20.0          6         232.0       100.0  2914.0          16.0          75       1                amc gremlin           29.140000
+mpg_max2:  24.0
+mpg_min2:  15.0
+weight_max2:  3907.0
+weight_min2:  2592.0
+mpg_term:  9.0
+weight_term:  1315.0
+test_mpg:  23.45931558935361
+chevrolet cavalier
+plymouth grand fury
+volvo 244dl
+ford torino 500
+pontiac catalina
+honda accord
+dodge colt hardtop
+mercury marquis brougham
+datsun 610
+===>  16     chevrolet chevette
+134    chevrolet chevette
+Name: car name, dtype: object  <===
+dodge colt (sw)
+chevrolet concours
+===>  36     amc matador
+185    amc matador
+Name: car name, dtype: object  <===
+toyota corona mark ii
+===>  16     chevrolet chevette
+134    chevrolet chevette
+Name: car name, dtype: object  <===
+amc concord dl 6
+===>  31    chevrolet chevelle malibu classic
+Name: car name, dtype: object  <===
+train test X 1:
+     mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                           car name  power weight ratio
+31  16.0          6         250.0       100.0  3781.0          17.0          74       1  chevrolet chevelle malibu classic               37.81
+      id  cylinders  displacement  horsepower  weight  acceleration  model year  origin                           car name
+107  215          8         305.0       140.0  4215.0          13.0          76       1  chevrolet chevelle malibu classic
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                    car name  power weight ratio
+2    19.0          6         156.0       108.0  2930.0          15.5          76       3              toyota mark ii           27.129630
+10   16.5          6         168.0       120.0  3820.0          16.7          76       2          mercedes-benz 280s           31.833333
+17   24.5          4          98.0        60.0  2164.0          22.1          76       1             chevrolet woody           36.066667
+50   25.0          4         116.0        81.0  2220.0          16.9          76       2                   opel 1900           27.407407
+54   25.0          4         140.0        92.0  2572.0          14.9          76       1                    capri ii           27.956522
+70   26.0          4          98.0        79.0  2255.0          17.7          76       1                  dodge colt           28.544304
+82   22.0          6         250.0       105.0  3353.0          14.5          76       1              chevrolet nova           31.933333
+90   29.0          4          90.0        70.0  1937.0          14.2          76       2                   vw rabbit           27.671429
+116  17.5          6         258.0        95.0  3193.0          17.8          76       1               amc pacer d/l           33.610526
+120  13.0          8         318.0       150.0  3940.0          13.2          76       1  plymouth volare premier v8           26.266667
+149  22.0          6         225.0       100.0  3233.0          15.4          76       1            plymouth valiant           32.330000
+165  13.0          8         302.0       130.0  3870.0          15.0          76       1                   ford f108           29.769231
+166  26.5          4         140.0        72.0  2565.0          13.6          76       1                  ford pinto           35.625000
+mpg_max2:  26.5
+mpg_min2:  16.5
+weight_max2:  3870.0
+weight_min2:  2164.0
+mpg_term:  10.0
+weight_term:  1706.0
+plymouth satellite custom
+pontiac firebird
+===>  75     ford galaxie 500
+151    ford galaxie 500
+Name: car name, dtype: object  <===
+ford mustang cobra
+audi fox
+mercury marquis
+volkswagen super beetle
+===>  68    ford gran torino
+Name: car name, dtype: object  <===
+chevrolet bel air
+pontiac phoenix lj
+===>  177    oldsmobile cutlass salon brougham
+Name: car name, dtype: object  <===
+train test X 1:
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                           car name  power weight ratio
+177  23.9          8         260.0        90.0  3420.0          22.2          79       1  oldsmobile cutlass salon brougham                38.0
+      id  cylinders  displacement  horsepower  weight  acceleration  model year  origin                           car name
+119  232          8         260.0       110.0  3365.0          15.5          78       1  oldsmobile cutlass salon brougham
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                         car name  power weight ratio
+11   30.9          4         105.0        75.0  2230.0          14.5          78       1                       dodge omni           29.733333
+32   31.5          4          89.0        71.0  1990.0          14.9          78       2              volkswagen scirocco           28.028169
+40   43.1          4          90.0        48.0  1985.0          21.5          78       2  volkswagen rabbit custom diesel           41.354167
+55   27.2          4         119.0        97.0  2300.0          14.7          78       3                       datsun 510           23.711340
+93   20.8          6         200.0        85.0  3070.0          16.7          78       1                   mercury zephyr           36.117647
+104  18.1          6         258.0       120.0  3410.0          15.1          78       1                  amc concord d/l           28.416667
+111  20.6          6         231.0       105.0  3380.0          15.8          78       1            buick century special           32.190476
+130  18.1          8         302.0       139.0  3205.0          11.2          78       1                      ford futura           23.057554
+148  17.5          8         318.0       140.0  4080.0          13.7          78       1                  dodge magnum xe           29.142857
+157  23.9          4         119.0        97.0  2405.0          14.9          78       3                    datsun 200-sx           24.793814
+164  18.6          6         225.0       110.0  3620.0          18.7          78       1                      dodge aspen           32.909091
+169  29.5          4          98.0        68.0  2135.0          16.6          78       3                  honda accord lx           31.397059
+178  19.4          8         318.0       140.0  3735.0          13.2          78       1                   dodge diplomat           26.678571
+179  25.1          4         140.0        88.0  2720.0          15.4          78       1              ford fairmont (man)           30.909091
+183  17.7          6         231.0       165.0  3445.0          13.4          78       1  buick regal sport coupe (turbo)           20.878788
+195  20.2          8         302.0       139.0  3570.0          12.8          78       1             mercury monarch ghia           25.683453
+mpg_max2:  31.5
+mpg_min2:  17.7
+weight_max2:  3735.0
+weight_min2:  1990.0
+mpg_term:  13.8
+weight_term:  1745.0
+test_mpg:  20.626074498567334
+mazda glc custom l
+chrysler cordoba
+ford country squire (sw)
+ford fairmont (auto)
+chrysler lebaron town @ country (sw)
+ford maverick
+volvo 245
+ford maverick
+chevy c10
+===>  22    subaru
+Name: car name, dtype: object  <===
+train test X 1:
+     mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin car name  power weight ratio
+22  26.0          4         108.0        93.0  2391.0          15.5          74       3   subaru           25.709677
+      id  cylinders  displacement  horsepower  weight  acceleration  model year  origin car name
+129  254          4          97.0        67.0  2065.0          17.8          81       3   subaru
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                   car name  power weight ratio
+4    37.7          4          89.0        62.0  2050.0          17.3          81       3              toyota tercel           33.064516
+18   28.1          4         141.0        80.0  3230.0          20.4          81       2  peugeot 505s turbo diesel           40.375000
+33   39.1          4          79.0        58.0  1755.0          16.9          81       3             toyota starlet           30.258621
+41   27.2          4         135.0        84.0  2490.0          15.7          81       1           plymouth reliant           29.642857
+48   35.1          4          81.0        60.0  1760.0          16.1          81       3           honda civic 1300           29.333333
+72   32.9          4         119.0       100.0  2615.0          14.8          81       3               datsun 200sx           26.150000
+73   30.0          4         135.0        84.0  2385.0          12.9          81       1           plymouth reliant           28.392857
+78   24.2          6         146.0       120.0  2930.0          13.8          81       3          datsun 810 maxima           24.416667
+85   39.0          4          86.0        64.0  1875.0          16.4          81       1             plymouth champ           29.296875
+94   34.4          4          98.0        65.0  2045.0          16.2          81       1             ford escort 4w           31.461538
+100  37.0          4          85.0        65.0  1975.0          19.4          81       3             datsun 210 mpg           30.384615
+113  34.5          4         100.0         0.0  2320.0          15.8          81       2                renault 18i                 inf
+122  33.0          4         105.0        74.0  2190.0          14.2          81       2           volkswagen jetta           29.594595
+129  23.5          6         173.0       110.0  2725.0          12.6          81       1         chevrolet citation           24.772727
+137  25.8          4         156.0        92.0  2620.0          14.4          81       1     dodge aries wagon (sw)           28.478261
+140  34.7          4         105.0        63.0  2215.0          14.9          81       1         plymouth horizon 4           35.158730
+156  22.4          6         231.0       110.0  3415.0          15.8          81       1              buick century           31.045455
+173  33.7          4         107.0        75.0  2210.0          14.4          81       3              honda prelude           29.466667
+mpg_max2:  39.0
+mpg_min2:  23.5
+weight_max2:  3230.0
+weight_min2:  1760.0
+mpg_term:  15.5
+weight_term:  1470.0
+test_mpg:  35.784013605442176
+ford fiesta
+honda accord
+volkswagen 411 (sw)
+===>  67    chevrolet monte carlo landau
+Name: car name, dtype: object  <===
+train test X 1:
+     mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                      car name  power weight ratio
+67  15.5          8         350.0       170.0  4165.0          11.4          77       1  chevrolet monte carlo landau                24.5
+      id  cylinders  displacement  horsepower  weight  acceleration  model year  origin                      car name
+133  263          8         305.0       145.0  3425.0          13.2          78       1  chevrolet monte carlo landau
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                         car name  power weight ratio
+11   30.9          4         105.0        75.0  2230.0          14.5          78       1                       dodge omni           29.733333
+32   31.5          4          89.0        71.0  1990.0          14.9          78       2              volkswagen scirocco           28.028169
+40   43.1          4          90.0        48.0  1985.0          21.5          78       2  volkswagen rabbit custom diesel           41.354167
+55   27.2          4         119.0        97.0  2300.0          14.7          78       3                       datsun 510           23.711340
+93   20.8          6         200.0        85.0  3070.0          16.7          78       1                   mercury zephyr           36.117647
+104  18.1          6         258.0       120.0  3410.0          15.1          78       1                  amc concord d/l           28.416667
+111  20.6          6         231.0       105.0  3380.0          15.8          78       1            buick century special           32.190476
+130  18.1          8         302.0       139.0  3205.0          11.2          78       1                      ford futura           23.057554
+148  17.5          8         318.0       140.0  4080.0          13.7          78       1                  dodge magnum xe           29.142857
+157  23.9          4         119.0        97.0  2405.0          14.9          78       3                    datsun 200-sx           24.793814
+164  18.6          6         225.0       110.0  3620.0          18.7          78       1                      dodge aspen           32.909091
+169  29.5          4          98.0        68.0  2135.0          16.6          78       3                  honda accord lx           31.397059
+178  19.4          8         318.0       140.0  3735.0          13.2          78       1                   dodge diplomat           26.678571
+179  25.1          4         140.0        88.0  2720.0          15.4          78       1              ford fairmont (man)           30.909091
+183  17.7          6         231.0       165.0  3445.0          13.4          78       1  buick regal sport coupe (turbo)           20.878788
+195  20.2          8         302.0       139.0  3570.0          12.8          78       1             mercury monarch ghia           25.683453
+mpg_max2:  31.5
+mpg_min2:  17.7
+weight_max2:  3735.0
+weight_min2:  1990.0
+mpg_term:  13.8
+weight_term:  1745.0
+test_mpg:  20.15157593123209
+buick skylark 320
+chrysler lebaron salon
+volvo 264gl
+===>  76    peugeot 504
+Name: car name, dtype: object  <===
+nissan stanza xe
+amc concord
+===>  59    toyota corolla
+Name: car name, dtype: object  <===
+plymouth custom suburb
+chrysler lebaron medallion
+plymouth 'cuda 340
+buick century luxus (sw)
+===>  12    datsun pl510
+Name: car name, dtype: object  <===
+train test X 1:
+     mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin      car name  power weight ratio
+12  27.0          4          97.0        88.0  2130.0          14.5          70       3  datsun pl510           24.204545
+      id  cylinders  displacement  horsepower  weight  acceleration  model year  origin      car name
+145  294          4          97.0        88.0  2130.0          14.5          71       3  datsun pl510
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                   car name  power weight ratio
+13   14.0          8         350.0       165.0  4209.0          12.0          71       1           chevrolet impala           25.509091
+26   13.0          8         400.0       175.0  5140.0          12.0          71       1        pontiac safari (sw)           29.371429
+28   17.0          6         250.0       100.0  3329.0          15.5          71       1  chevrolet chevelle malibu           33.290000
+57   30.0          4          88.0        76.0  2065.0          14.5          71       2                  fiat 124b           27.171053
+66   22.0          4         140.0        72.0  2408.0          19.0          71       1        chevrolet vega (sw)           33.444444
+71   28.0          4         116.0        90.0  2123.0          14.0          71       2                  opel 1900           23.588889
+80   27.0          4          97.0        60.0  1834.0          19.0          71       2       volkswagen model 111           30.566667
+88   23.0          4         122.0        86.0  2220.0          14.0          71       1         mercury capri 2000           25.813953
+102  26.0          4          91.0        70.0  1955.0          20.5          71       1           plymouth cricket           27.928571
+151  14.0          8         351.0       153.0  4154.0          13.5          71       1           ford galaxie 500           27.150327
+155  31.0          4          71.0        65.0  1773.0          19.0          71       3        toyota corolla 1200           27.276923
+159  18.0          6         250.0        88.0  3139.0          14.5          71       1               ford mustang           35.670455
+163  12.0          8         383.0       180.0  4955.0          11.5          71       1          dodge monaco (sw)           27.527778
+168  28.0          4         140.0        90.0  2264.0          15.5          71       1        chevrolet vega 2300           25.155556
+175  25.0          4          98.0         0.0  2046.0          19.0          71       1                 ford pinto                 inf
+180  35.0          4          72.0        69.0  1613.0          18.0          71       3                datsun 1200           23.376812
+185  18.0          6         232.0       100.0  3288.0          15.5          71       1                amc matador           32.880000
+193  19.0          6         232.0       100.0  2634.0          13.0          71       1                amc gremlin           26.340000
+mpg_max2:  31.0
+mpg_min2:  13.0
+weight_max2:  4955.0
+weight_min2:  1773.0
+mpg_term:  18.0
+weight_term:  3182.0
+test_mpg:  28.98051539912005
+plymouth volare
+dodge colt m/m
+fiat 124 tc
+===>  82     chevrolet nova
+108    chevrolet nova
+Name: car name, dtype: object  <===
+chevrolet malibu
+buick estate wagon (sw)
+===>  158    datsun 710
+Name: car name, dtype: object  <===
+train test X 1:
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin    car name  power weight ratio
+158  32.0          4          83.0        61.0  2003.0          19.0          74       3  datsun 710           32.836066
+      id  cylinders  displacement  horsepower  weight  acceleration  model year  origin    car name
+152  304          4         119.0        97.0  2545.0          17.0          75       3  datsun 710
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                   car name  power weight ratio
+6    16.0          6         250.0       105.0  3897.0          18.5          75       1  chevroelt chevelle malibu           37.114286
+36   15.0          6         258.0       110.0  3730.0          19.0          75       1                amc matador           33.909091
+39   23.0          4         140.0        78.0  2592.0          18.5          75       1              pontiac astro           33.230769
+45   23.0          4         140.0        83.0  2639.0          17.0          75       1                 ford pinto           31.795181
+60   25.0          4          90.0        71.0  2223.0          16.5          75       2          volkswagen dasher           31.309859
+63   14.0          8         351.0       148.0  4657.0          13.5          75       1                   ford ltd           31.466216
+76   23.0          4         120.0        88.0  2957.0          17.0          75       2                peugeot 504           33.602273
+79   19.0          6         232.0        90.0  3211.0          17.0          75       1                  amc pacer           35.677778
+108  18.0          6         250.0       105.0  3459.0          16.0          75       1             chevrolet nova           32.942857
+128  17.0          6         231.0       110.0  3907.0          21.0          75       1              buick century           35.518182
+139  20.0          8         262.0       110.0  3221.0          13.5          75       1        chevrolet monza 2+2           29.281818
+142  24.0          4         134.0        96.0  2702.0          13.5          75       3              toyota corona           28.145833
+147  21.0          6         231.0       110.0  3039.0          15.0          75       1              buick skyhawk           27.627273
+162  20.0          6         232.0       100.0  2914.0          16.0          75       1                amc gremlin           29.140000
+mpg_max2:  24.0
+mpg_min2:  15.0
+weight_max2:  3907.0
+weight_min2:  2592.0
+mpg_term:  9.0
+weight_term:  1315.0
+test_mpg:  24.32167300380228
+oldsmobile omega brougham
+ford granada gl
+peugeot 304
+cadillac seville
+honda civic cvcc
+===>  36     amc matador
+185    amc matador
+Name: car name, dtype: object  <===
+ford country
+honda civic (auto)
+ford maverick
+===>  96    honda civic
+Name: car name, dtype: object  <===
+toyota celica gt liftback
+buick electra 225 custom
+plymouth satellite sebring
+mercury monarch
+===>  103    chevrolet vega
+121    chevrolet vega
+Name: car name, dtype: object  <===
+===>  20     ford pinto
+45     ford pinto
+166    ford pinto
+175    ford pinto
+Name: car name, dtype: object  <===
+pontiac catalina
+dodge d200
+mazda glc
+===>  14     amc hornet
+43     amc hornet
+191    amc hornet
+Name: car name, dtype: object  <===
+plymouth satellite
+saab 99gle
+===>  105    toyota corona
+142    toyota corona
+Name: car name, dtype: object  <===
+pontiac ventura sj
+renault 12tl
+===>  38    mazda 626
+Name: car name, dtype: object  <===
+train test X 1:
+     mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin   car name  power weight ratio
+38  31.3          4         120.0        75.0  2542.0          17.5          80       3  mazda 626           33.893333
+      id  cylinders  displacement  horsepower  weight  acceleration  model year  origin   car name
+178  358          4         120.0        74.0  2635.0          18.3          81       3  mazda 626
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                   car name  power weight ratio
+4    37.7          4          89.0        62.0  2050.0          17.3          81       3              toyota tercel           33.064516
+18   28.1          4         141.0        80.0  3230.0          20.4          81       2  peugeot 505s turbo diesel           40.375000
+33   39.1          4          79.0        58.0  1755.0          16.9          81       3             toyota starlet           30.258621
+41   27.2          4         135.0        84.0  2490.0          15.7          81       1           plymouth reliant           29.642857
+48   35.1          4          81.0        60.0  1760.0          16.1          81       3           honda civic 1300           29.333333
+72   32.9          4         119.0       100.0  2615.0          14.8          81       3               datsun 200sx           26.150000
+73   30.0          4         135.0        84.0  2385.0          12.9          81       1           plymouth reliant           28.392857
+78   24.2          6         146.0       120.0  2930.0          13.8          81       3          datsun 810 maxima           24.416667
+85   39.0          4          86.0        64.0  1875.0          16.4          81       1             plymouth champ           29.296875
+94   34.4          4          98.0        65.0  2045.0          16.2          81       1             ford escort 4w           31.461538
+100  37.0          4          85.0        65.0  1975.0          19.4          81       3             datsun 210 mpg           30.384615
+113  34.5          4         100.0         0.0  2320.0          15.8          81       2                renault 18i                 inf
+122  33.0          4         105.0        74.0  2190.0          14.2          81       2           volkswagen jetta           29.594595
+129  23.5          6         173.0       110.0  2725.0          12.6          81       1         chevrolet citation           24.772727
+137  25.8          4         156.0        92.0  2620.0          14.4          81       1     dodge aries wagon (sw)           28.478261
+140  34.7          4         105.0        63.0  2215.0          14.9          81       1         plymouth horizon 4           35.158730
+156  22.4          6         231.0       110.0  3415.0          15.8          81       1              buick century           31.045455
+173  33.7          4         107.0        75.0  2210.0          14.4          81       3              honda prelude           29.466667
+mpg_max2:  39.0
+mpg_min2:  23.5
+weight_max2:  3230.0
+weight_min2:  1760.0
+mpg_term:  15.5
+weight_term:  1470.0
+test_mpg:  29.773809523809526
+buick century 350
+ford mustang ii
+peugeot 604sl
+datsun b-210
+===>  63    ford ltd
+Name: car name, dtype: object  <===
+train test X 1:
+     mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin  car name  power weight ratio
+63  14.0          8         351.0       148.0  4657.0          13.5          75       1  ford ltd           31.466216
+      id  cylinders  displacement  horsepower  weight  acceleration  model year  origin  car name
+183  369          8         351.0       158.0  4363.0          13.0          73       1  ford ltd
+      mpg  cylinders  displacement  horsepower  weight  acceleration  model year  origin                   car name  power weight ratio
+7    11.0          8         350.0       180.0  3664.0          11.0          73       1           oldsmobile omega           20.355556
+14   18.0          6         232.0       100.0  2945.0          16.0          73       1                 amc hornet           29.450000
+20   19.0          4         122.0        85.0  2310.0          18.5          73       1                 ford pinto           27.176471
+34   24.0          4         121.0       110.0  2660.0          14.0          73       2                  saab 99le           24.181818
+51   16.0          6         250.0       100.0  3278.0          18.0          73       1      chevrolet nova custom           32.780000
+56   13.0          8         360.0       175.0  3821.0          11.0          73       1    amc ambassador brougham           21.834286
+81   15.0          8         318.0       150.0  3777.0          12.5          73       1       dodge coronet custom           25.180000
+107  19.0          4         121.0       112.0  2868.0          15.5          73       2                volvo 144ea           25.607143
+121  21.0          4         140.0        72.0  2401.0          19.5          73       1             chevrolet vega           33.347222
+132  15.0          8         350.0       145.0  4082.0          13.0          73       1    chevrolet monte carlo s           28.151724
+136  20.0          6         156.0       122.0  2807.0          13.5          73       3             toyota mark ii           23.008197
+150  18.0          6         232.0       100.0  2789.0          15.0          73       1                amc gremlin           27.890000
+184  11.0          8         400.0       150.0  4997.0          14.0          73       1           chevrolet impala           33.313333
+192  13.0          8         400.0       150.0  4464.0          12.0          73       1  chevrolet caprice classic           29.760000
+198  26.0          4          98.0        90.0  2265.0          15.5          73       2       fiat 124 sport coupe           25.166667
+mpg_max2:  24.0
+mpg_min2:  13.0
+weight_max2:  4464.0
+weight_min2:  2310.0
+mpg_term:  11.0
+weight_term:  2154.0
+test_mpg:  13.515784586815228
+audi 100ls
+dodge coronet custom (sw)
+mercury lynx l
+oldsmobile cutlass ls
+mazda rx2 coupe
+mercury capri v6
+datsun 310
+toyota cressida
+plymouth fury
+fiat 131
+audi 100ls
+===>  3     dodge colt
+70    dodge colt
+Name: car name, dtype: object  <===
+buick opel isuzu deluxe
+pontiac grand prix lj
+volkswagen rabbit custom
