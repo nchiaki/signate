@@ -282,9 +282,10 @@ while ix < len_test:
 
     len_train_all = len(train_all)
     if len_train_all > 2:
-        mpg_test = get_mpg_by_weght(train_all, weight_test)
+        mpg_weght_test = get_mpg_by_weght(train_all, weight_test)
+        mpg_displacement_test = get_mpg_by_displacement(train_all, displacement_test)
+        mpg_test = (mpg_weght_test + mpg_displacement_test) / 2
         print(id_test, ": mpg_test = ", mpg_test, "\n")
-
     else:
         store_year = 0
         if (len(checked_year) == 0):
@@ -338,9 +339,6 @@ while ix < len_test:
                     mpg_test = get_mpg_by_displacement(train_by_year, displacement_test)
                 else:
                     mpg_test = 0
-                #mpg_weight_test = get_mpg_by_weght(train_by_year, weight_test)
-                #mpg_displacement_test = get_mpg_by_displacement(train_by_year, displacement_test)
-                #mpg_test = (mpg_weight_test + mpg_displacement_test) / 2
         else:
             # 同名/同年式の車がある場合、その車のmpgと車重からmpgを推測する
             if (mpg_coff_list["{year_test}"] == 0):
@@ -349,9 +347,6 @@ while ix < len_test:
                 mpg_test = get_mpg_by_displacement(train_by_carname_year, displacement_test)
             else:
                 mpg_test = 0
-            #mpg_weight_test = get_mpg_by_weght(train_by_carname_year, weight_test)
-            #mpg_displacement_test = get_mpg_by_displacement(train_by_carname_year, displacement_test)
-            #mpg_test = (mpg_weight_test + mpg_displacement_test) / 2
 
         print(id_test, ": mpg_test = ", mpg_test, "w: ", mpg_weight_test, "d: ", mpg_displacement_test, "\n")
 
