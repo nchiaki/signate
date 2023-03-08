@@ -135,7 +135,7 @@ def horse_power_predictor():
             test_size_rate = repeat_tstsz
             random_state = 1
             while random_state <= 100:
-                print('horse_power_predictor                                                       ', end='\r')
+                print('\x1b[K', end='\r') # カーソルを先頭に移動して、行をクリア
                 print('horse_power_predictor', hpw_log_candidate_x, repeat_tstsz, random_state, end='\r')
 
                 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size_rate, random_state=random_state)
@@ -385,7 +385,7 @@ while True:
         test_size_rate = repeat_tstsz
         random_state = 1
         while random_state <= 100:
-            print('do_predict                                                       ', end='\r')
+            print('\x1b[K', end='\r') # カーソルを先頭に移動して、行をクリア
             print('do_predict', log_candidate_x, repeat_tstsz, random_state, end='\r')
 
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size_rate, random_state=random_state)
