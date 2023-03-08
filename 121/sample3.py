@@ -135,7 +135,8 @@ def horse_power_predictor():
             test_size_rate = repeat_tstsz
             random_state = 1
             while random_state <= 100:
-                print(hpw_log_candidate_x, repeat_tstsz, random_state, end='\r')
+                print('horse_power_predictor                                                       ', end='\r')
+                print('horse_power_predictor', hpw_log_candidate_x, repeat_tstsz, random_state, end='\r')
 
                 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size_rate, random_state=random_state)
 
@@ -158,7 +159,8 @@ def horse_power_predictor():
                 #print('train score: %.3f' % score_train)
                 #print('test score: %.3f' % score_test)
 
-                if rmes_delta != 0.0 and rmes_delta < hpw_min_rmes:
+                #if rmes_delta != 0.0 and rmes_delta < hpw_min_rmes:
+                if np.round(rmes_train, 3) != 0.0 and rmes_delta < hpw_min_rmes:
                     hpw_min_log_candidate_x = hpw_log_candidate_x - 1
                     print("Horse Power Predict =============================")
                     #print(X_train.info())
@@ -383,7 +385,8 @@ while True:
         test_size_rate = repeat_tstsz
         random_state = 1
         while random_state <= 100:
-            print(log_candidate_x, repeat_tstsz, random_state, end='\r')
+            print('do_predict                                                       ', end='\r')
+            print('do_predict', log_candidate_x, repeat_tstsz, random_state, end='\r')
 
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size_rate, random_state=random_state)
 
@@ -409,7 +412,8 @@ while True:
             if not do_auto:
                 quit()
 
-            if (rmes_delta != 0.0) and (rmes_delta < min_rmes):
+            #if (rmes_delta != 0.0) and (rmes_delta < min_rmes):
+            if (np.round(rmes_train, 3) != 0.0) and (rmes_delta < min_rmes):
                 print('MPG Predict =================')
                 print(tmp_explanatory_variables)
                 print('test_size_rate: %.2f' % test_size_rate)
@@ -446,6 +450,23 @@ while True:
                     nwdf['id'] = test['id']
                     nwdf['mpg'] = y_pred['mpg']
                     #print(nwdf.info())
+
+                    # 予測値と説明変数の関係を確認
+                    print('予測値と説明変数の関係を確認 =================')
+                    dmydf = pd.DataFrame()
+                    dmydf['mpg'] = y_pred['mpg']
+                    for col in tmp_explanatory_variables:
+                        if (col.find('log_') == 0):
+                            nmr_col = col[4:]
+                            dmydf[nmr_col] = test[nmr_col]
+                        else:
+                            dmydf[col] = test[col]
+                    print(dmydf.info())
+                    print(dmydf.corr())
+                    plt.title('Delta '+str(min_rmes))
+                    sns.heatmap(dmydf.corr(), annot=True, cmap='Blues')
+                    plt.show()               
+
                     nwdf.to_csv('y_pred.csv', index=False)
             
             random_state = random_state + 1
