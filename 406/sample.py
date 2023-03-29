@@ -30,19 +30,22 @@ testimgdir = ''
 
 lr_value = 0.001
 lr_value_max = 0.25
-lr_valune_inc = 0.003
+lr_value_inc = 0.003
+lr_value_fix = 0.0
+
 
 NumOfEpoch = 90
 topOfAccuracy = 0.0
 
 def usage(Iam):
-    print('Usage: {} -pretrain=<preDictFile> -testimgdir=<TestImgDataDir> -train -epoch=<epoch> -lrval=<lrValue> -lrmax=<lrValueMax> -lrinc=<lrValueInc>'.format(Iam))
+    print('Usage: {} -pretrain=<preDictFile> -testimgdir=<TestImgDataDir> -train -epoch=<epoch> -lrval=<lrValue> -lrmax=<lrValueMax> -lrinc=<lrValueInc> -lrfix=<lrValueFix>'.format(Iam))
     print('  -pretrain=<preDictFile> : 学習済みモデルdictファイル：指定無き場合はモデル学習を実施')
     print('  -testimgdir=<TestImgDataDir> : テスト用画像データディレクトリ:指定無き場合はテストは実施しない')
     print('  -epoch=<epoch> : 学習回数 Def.{}'.format(NumOfEpoch))
     print('  -lrval=<lrValue> : 学習率初期値 Def.{}'.format(lr_value))
     print('  -lrmax=<lrValueMax> : 学習率最大値 Def.{}'.format(lr_value_max))
-    print('  -lrinc=<lrValueInc> : 学習率増加値 Def.{}'.format(lr_valune_inc))
+    print('  -lrinc=<lrValueInc> : 学習率増加値 Def.{}'.format(lr_value_inc))
+    print('  -lrfix=<lrValueFix> : 学習率固定値 指定するとこの値のみで学習する')
     print('  -help : このヘルプを表示')
 
 
@@ -222,10 +225,7 @@ def main(train):
         return
     elif (train == False):
         return
-    
-    print('Off limit')
-    exit(0)
-    
+        
     # データの読み込み
     ## まずは用意されているZIPファイルを解凍
     train_list, train_result = unzip_data(traindatazip, traindata_export_path, train_image_path)
@@ -293,16 +293,26 @@ def main(train):
     model = create_model(TARGET_NUM)
     #print(model)
 
-    while lr_value <= lr_value_max:
+    global lr_value
+    global topOfAccuracy
+    if 0.0 < lr_value_fix:
+        lr_value = lr_value_fix
         # 最適化関数を定義
         optimizer = optim.SGD(model.parameters(), lr=lr_value, momentum=0.9)
         #print(type(optimizer))
         # 損失関数を定義
         criterion = nn.CrossEntropyLoss()
-
         topOfAccuracy = train_model(model, dataset_sizes, image_dataloaders, criterion, optimizer, topOfAccuracy, num_epochs=NumOfEpoch, is_saved = True)
-        lr_value += lr_valune_inc
-        lr_value = round(lr_value, 3)
+    else:
+        while lr_value <= lr_value_max:
+            # 最適化関数を定義
+            optimizer = optim.SGD(model.parameters(), lr=lr_value, momentum=0.9)
+            #print(type(optimizer))
+            # 損失関数を定義
+            criterion = nn.CrossEntropyLoss()
+            topOfAccuracy = train_model(model, dataset_sizes, image_dataloaders, criterion, optimizer, topOfAccuracy, num_epochs=NumOfEpoch, is_saved = True)
+            lr_value += lr_value_inc
+            lr_value = round(lr_value, 3)
 
 if __name__ == '__main__':
     train = False
@@ -321,10 +331,12 @@ if __name__ == '__main__':
                 NumOfEpoch = int(argvs[i].split('=')[1])
             elif '-lrval=' in argvs[i]:
                 lr_value = float(argvs[i].split('=')[1])
-            elif '-lrvalmax=' in argvs[i]:
+            elif '-lrmax=' in argvs[i]:
                 lr_value_max = float(argvs[i].split('=')[1])
-            elif '-lrvalinc=' in argvs[i]:
-                lr_valune_inc = float(argvs[i].split('=')[1])
+            elif '-lrinc=' in argvs[i]:
+                lr_value_inc = float(argvs[i].split('=')[1])
+            elif '-lrfix=' in argvs[i]:
+                lr_value_fix = float(argvs[i].split('=')[1])
             elif '-train' in argvs[i]:
                 train = True
             else:
