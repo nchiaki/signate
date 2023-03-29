@@ -47,7 +47,10 @@ TARGET_NUM = 2
 
 
 lr_value = 0.001
-NumOfEpoch = 3 #90
+lr_value_max = 0.25
+lr_valune_inc = 0.003
+
+NumOfEpoch = 90
 topOfAccuracy = 0.0
 
 # ZIPファイルの解凍
@@ -241,13 +244,13 @@ image_dataloaders = {
 model = create_model(TARGET_NUM)
 #print(model)
 
-while lr_value <= 0.25:
+while lr_value <= lr_value_max:
     # 最適化関数を定義
     optimizer = optim.SGD(model.parameters(), lr=lr_value, momentum=0.9)
-    print(type(optimizer))
+    #print(type(optimizer))
     # 損失関数を定義
     criterion = nn.CrossEntropyLoss()
 
     topOfAccuracy = train_model(model, dataset_sizes, image_dataloaders, criterion, optimizer, topOfAccuracy, num_epochs=NumOfEpoch, is_saved = True)
-    lr_value += 0.05
+    lr_value += lr_valune_inc
     lr_value = round(lr_value, 3)
