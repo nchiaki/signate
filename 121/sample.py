@@ -2,6 +2,70 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
+import csv
+
+# get_mpg(trainlst, weght)
+# trainlst: train.tsvから読み込んだデータフレーム
+# weght: 重量
+# 戻り値: 燃費
+# trainlst内のmpgと車重の割合を計算し、その結果、weghtに最も近い値を持つ行のmpgを返す
+def get_mpg(trainlst, weght):
+    # trainlst内のweightで同値の行は1行にまとめる。
+    # その際、mpgの平均値を適用する 
+    trainlst = trainlst.groupby('weight').mean().reset_index()
+
+    train_mpg = trainlst['mpg']
+    mpg_max = train_mpg.max()
+    mpg_min = train_mpg.min()
+    #print("mpg_max: ", mpg_max)
+    #print("mpg_min: ", mpg_min)
+    train_mpg2 = train_mpg.drop(train_mpg[train_mpg == mpg_max].index)
+    train_mpg2 = train_mpg2.drop(train_mpg2[train_mpg == mpg_min].index)
+    mpg_max = train_mpg2.max()
+    mpg_min = train_mpg2.min()
+    print("mpg_max2: ", mpg_max)
+    print("mpg_min2: ", mpg_min)
+    mpg_term = (mpg_max - mpg_min)
+
+    train_weight = trainlst['weight']
+    weight_max = train_weight.max()
+    weight_min = train_weight.min()
+    #print("weight_max: ", weight_max)
+    #print("weight_min: ", weight_min)
+    train_weight2 = train_weight.drop(train_weight[train_weight == weight_max].index)
+    train_weight2 = train_weight2.drop(train_weight2[train_weight == weight_min].index)
+    weight_max = train_weight2.max()
+    weight_min = train_weight2.min()
+    print("weight_max2: ", weight_max)
+    print("weight_min2: ", weight_min)
+    weight_term = (weight_max - weight_min)
+
+    print("mpg_term: ", mpg_term)
+    print("weight_term: ", weight_term)
+
+    mpgwght_ratio = mpg_term / weight_term
+    test_weight = weght
+    if weight_min <= test_weight <= weight_max:
+        test_weight = test_weight - weight_min
+        test_mpg = mpg_max - (test_weight * mpgwght_ratio)
+        print("test_mpg at in-range weight: ", test_mpg)
+    elif test_weight < weight_min:
+        test_weight = weight_min - test_weight
+        test_mpg = mpg_max + (test_weight * mpgwght_ratio)
+        print("test_mpg in lighter than minimum weight: ", test_mpg)
+    elif test_weight > weight_max:
+        test_weight = test_weight - weight_max
+        test_mpg = mpg_min - (test_weight * mpgwght_ratio)
+        print("test_mpg in heavier than maximum weight: ", test_mpg)
+    else:
+        test_mpg = 0
+
+    return test_mpg
+# End of get_mpg
+
+id_list = []
+mpg_list = []
+result_list = []
 
 pd.set_option('display.expand_frame_repr', False)
 print(pd.get_option("display.max_columns"))
@@ -15,22 +79,23 @@ print(train.info())
 print("読みたて=====")
 
 train = train.dropna()
-train_len = len(train)
-ix = 0
-while ix < train_len:
-    if train.iloc[ix]['horsepower'] == '?':
-        train.drop(index=ix, inplace=True)
-        train_len = train_len - 1
-    else:
-        ix = ix + 1
-print(train.shape)
-print(train.info())
-print("horsepower ? 行削除=====")
 
-train['horsepower'] = train['horsepower'].apply(lambda train: train.replace('?', '0.0')).astype('float64')
-print(train.shape)
-print(train.info())
-print("horsepower行　型変換=====")
+#train_len = len(train)
+#ix = 0
+#while ix < train_len:
+#    if train.iloc[ix]['horsepower'] == '?':
+#        train.drop(index=ix, inplace=True)
+#        train_len = train_len - 1
+#    else:
+#        ix = ix + 1
+#print(train.shape)
+#print(train.info())
+#print("horsepower ? 行削除=====")
+#
+#train['horsepower'] = train['horsepower'].apply(lambda train: train.replace('?', '0.0')).astype('float64')
+#print(train.shape)
+#print(train.info())
+#print("horsepower行　型変換=====")
 
 
 train = train.drop(columns=['id'])
@@ -38,8 +103,9 @@ print(train.shape)
 print(train.info())
 print("id 削除=====")
 
-pwrwgtratio =  train['weight'] / train['horsepower']
-train['power weight ratio'] = pwrwgtratio
+#pwrwgtratio =  train['weight'] / train['horsepower']
+#train['power weight ratio'] = pwrwgtratio
+
 #dsplcmntwgtratio =  train['weight'] / train['displacement']
 #train['displacement weight ratio'] = dsplcmntwgtratio
 #pwrdsplcmntratio =  train['power weight ratio'] / train['displacement weight ratio']
@@ -80,10 +146,10 @@ plt.ylabel('mpg')
 plt.show()
 
 # 横軸に power weght ratio, 縦軸にmpgを割り当て散布図を描画する
-plt.scatter(train['power weight ratio'], train['mpg'])
-plt.xlabel('power weight ratio')
-plt.ylabel('mpg')
-plt.show()
+#plt.scatter(train['power weight ratio'], train['mpg'])
+#plt.xlabel('power weight ratio')
+#plt.ylabel('mpg')
+#plt.show()
 
 # 横軸に displacement weight ratio, 縦軸にmpgを割り当て散布図を描画する
 #plt.scatter(train['displacement weight ratio'], train['mpg'])
@@ -124,129 +190,72 @@ print(test.info())
 print("test 読みたて=====")
 
 test = test.dropna()
-test_len = len(test)
+
+#test_len = len(test)
+#ix = 0
+#while ix < test_len:
+#    if test.iloc[ix]['horsepower'] == '?':
+#        test.drop(index=ix, inplace=True)
+#        test_len = test_len - 1
+#    else:
+#        ix = ix + 1
+#test['horsepower'] = test['horsepower'].apply(lambda test: test.replace('?', '0.0')).astype('float64')
+#print(test.shape)
+#print(test.info())
+#print("test drop nan & horsepower ? =====")
+
+# testの車ごとに車名と年式を取得し、trainから同じ車名と年式のデータを取得する
+# そのtrainのデータから、mpgを推測する
+# trainに同名/同年式の車がない場合、異名/同年式の車のデータを取得し、そこから同年式の車のmpgを推測する
+# trainに同名/同年式、異名/同年式の車も無い場合、testの車の車重±10kgの範囲のmpgの平均値を推測する
+len_test = len(test)
+print("test X ", len_test)
 ix = 0
-while ix < test_len:
-    if test.iloc[ix]['horsepower'] == '?':
-        test.drop(index=ix, inplace=True)
-        test_len = test_len - 1
-    else:
-        ix = ix + 1
-test['horsepower'] = test['horsepower'].apply(lambda test: test.replace('?', '0.0')).astype('float64')
-print(test.shape)
-print(test.info())
-print("test drop nan & horsepower ? =====")
+while ix < len_test:
+    id_test = test.iloc[ix]['id']
+    carname_test = test.iloc[ix]['car name']
+    year_test = test.iloc[ix]['model year']
+    weight_test = test.iloc[ix]['weight']
+    print(id_test, carname_test, year_test, weight_test)
 
-test_by_carname = test['car name']
-#print(test_by_carname)
-#exit()
-
-for carname in test_by_carname:
-    train_inccar = train.loc[train['car name'] == carname, 'car name']
-    if (len(train_inccar) == 0):
-        print(carname)
-        continue
-    # trainに同名の車がある場合、その車のデータを取得し、そこから推測する
-    print("===> ", train_inccar, " <===")
-    train_inccar = train.loc[train['car name'] == carname]
-    if (len(train_inccar) == 1):
-        # trainに同名の車が1台の場合、その車のデータを取得し、そこから推測する
-        test_inccar = test.loc[test['car name'] == carname]
-        if len(test_inccar) == 1:
-            # testに同名の車が1台の場合、その車の年代を取得し、その年代のデータ推測する
-            print("train test X 1:")
-            print(train_inccar)
-            print(test_inccar)
-
-            mdlyr = test_inccar['model year'].values[0]
-            train_by_mdlyr = train.loc[train['model year'] == mdlyr]        
-            print(train_by_mdlyr)
-
-            train_mpg_by_mdlyr = train_by_mdlyr['mpg']
-            mpg_max = train_mpg_by_mdlyr.max()
-            mpg_min = train_mpg_by_mdlyr.min()
-            #print("mpg_max: ", mpg_max)
-            #print("mpg_min: ", mpg_min)
-            train_mpg_by_mdlyr2 = train_mpg_by_mdlyr.drop(train_mpg_by_mdlyr[train_mpg_by_mdlyr == mpg_max].index)
-            train_mpg_by_mdlyr2 = train_mpg_by_mdlyr2.drop(train_mpg_by_mdlyr2[train_mpg_by_mdlyr == mpg_min].index)
-            mpg_max = train_mpg_by_mdlyr2.max()
-            mpg_min = train_mpg_by_mdlyr2.min()
-            print("mpg_max2: ", mpg_max)
-            print("mpg_min2: ", mpg_min)
-            mpg_term = (mpg_max - mpg_min)
-
-            train_weight_by_mdlyr = train_by_mdlyr['weight']
-            weight_max = train_weight_by_mdlyr.max()
-            weight_min = train_weight_by_mdlyr.min()
-            #print("weight_max: ", weight_max)
-            #print("weight_min: ", weight_min)
-            train_weight_by_mdlyr2 = train_weight_by_mdlyr.drop(train_weight_by_mdlyr[train_weight_by_mdlyr == weight_max].index)
-            train_weight_by_mdlyr2 = train_weight_by_mdlyr2.drop(train_weight_by_mdlyr2[train_weight_by_mdlyr == weight_min].index)
-            weight_max = train_weight_by_mdlyr2.max()
-            weight_min = train_weight_by_mdlyr2.min()
-            print("weight_max2: ", weight_max)
-            print("weight_min2: ", weight_min)
-            weight_term = (weight_max - weight_min)
-
-            print("mpg_term: ", mpg_term)
-            print("weight_term: ", weight_term)
-
-            mpgwght_ratio = mpg_term / weight_term
-            test_weight = test_inccar['weight'].values[0]
-            if weight_min <= test_weight <= weight_max:
-                test_weight = test_weight - weight_min
-                test_mpg = mpg_max - (test_weight * mpgwght_ratio)
-                print("test_mpg: ", test_mpg)
-            elif test_weight < weight_min:
-                test_weight = weight_min - test_weight
-                test_mpg = mpg_max + (test_weight * mpgwght_ratio)
-                print("test_mpg: ", test_mpg)
-            elif test_weight > weight_max:
-                test_weight = test_weight - weight_max
-                test_mpg = mpg_min - (test_weight * mpgwght_ratio)
-                print("test_mpg: ", test_mpg)
-
-            continue
-
-            # testのdisplacement weight ratioを求める
-            test_inccar_dsplcmnt = test_inccar['displacement'] / test_inccar['weight']
-            test_weight = test_inccar['weight'].values[0]
-            test_cylinders = test_inccar['cylinders'].values[0]
-            # train側の同年車のデータを取得する
-            train_trainyear = train.loc[(train['model year'] == train_inccar['model year'].values[0]) & (train['cylinders'] == test_cylinders)]
-            print(train_trainyear)
-            train_testyear = train.loc[(train['model year'] == test_inccar['model year'].values[0]) & (train['cylinders'] == test_cylinders)]
-            print(train_testyear)
-
-            # 横軸に displacement weight ratio, 縦軸にmpgを割り当て散布図を描画する
-            #plt.scatter(train_trainyear['displacement weight ratio'], train_trainyear['mpg'])
-            #plt.xlabel("{:s} {:d}: {:d} displacement weight ratio".format(carname, test_cylinders, train_trainyear['model year'].values[0]))
-            plt.scatter(train_trainyear['displacement'], train_trainyear['mpg'])
-            plt.xlabel("{:s} {:d}: {:d} displacement".format(carname, test_cylinders, train_trainyear['model year'].values[0]))
-            plt.ylabel('mpg')
-            plt.show()
-            #plt.scatter(train_testyear['displacement weight ratio'], train_testyear['mpg'])
-            #plt.xlabel("{:s} {:d}: {:d} displacement weight ratio".format(carname, test_cylinders, train_testyear['model year'].values[0]))
-            plt.scatter(train_testyear['displacement'], train_testyear['mpg'])
-            plt.xlabel("{:s} {:d}: {:d} displacement".format(carname, test_cylinders, train_testyear['model year'].values[0]))
-            plt.ylabel('mpg')
-            plt.show()
-
-            #test_inccar['mpg'] = train_inccar['mpg']
-            # test_inccar.to_csv('test_inccar.tsv', sep='\t', index=False, header=False)
-            continue
+    train_by_carname_year = train.loc[(train['car name'] == carname_test) & (train['model year'] == year_test)]
+    len_train_by_carname_year = len(train_by_carname_year)
+    print("train_by_carname_year X ", len_train_by_carname_year)
+    if (len_train_by_carname_year <= 2):
+        # 同名/同年式の車が2台以下の場合、異名/同年式の車のデータを取得する
+        train_by_year = train.loc[train['model year'] == year_test]
+        print("train_by_year X ", len(train_by_year))
+        if (len(train_by_year) == 0):
+            # 同年式の車が無い場合、車重±10kgの範囲のmpgの平均値を推測する
+            train_by_weight = train.loc[(train['weight'] >= (weight_test - 10.0)) & (train['weight'] <= (weight_test + 10.0))]
+            print("train_by_weight X ", len(train_by_weight))
+            if (len(train_by_weight) == 0):
+                # 車重±10kgの範囲の車が無い場合、testの車のmpgを0とする
+                mpg_test = 0
+                print("No test_mpg")
+            else:
+                # 車重±10kgの範囲の車がある場合、その車のmpgの平均値を推測する
+                mpg_test = train_by_weight['mpg'].mean()
+                print("test_mpg Average by Weight: ", mpg_test)
         else:
-            # testに同名の車が複数台の場合、その車のデータを取得し、そこから推測する
-            #print("train X 1 test X ", len(test_inccar), ":")
-            #print(train_inccar)
-            #print(test_inccar)
-
-            #test_inccar['mpg'] = train_inccar['mpg']
-            # test_inccar.to_csv('test_inccar.tsv', sep='\t', index=False, header=False)
-            continue
-        continue
+            # 同年式の車がある場合、その車のmpgと車重からtestの車のmpgを推測する
+            mpg_test = get_mpg(train_by_year, weight_test)
     else:
-        #print("train_inccar X ", len(train_inccar), ":")
-        #print(train_inccar)
-        continue
+        # 同名/同年式の車がある場合、その車のmpgと車重からmpgを推測する
+        mpg_test = get_mpg(train_by_carname_year, weight_test)
 
+    print(id_test, ": mpg_test = ", mpg_test, "\n")
+    id_list.append(id_test)
+    mpg_list.append(round(mpg_test, 1))
+
+    ix = ix + 1
+
+    # idとmpgのcvsファイルを出力する
+    cvsf = open('result.csv', 'w', encoding='utf-8', newline='\n')
+    writer = csv.writer(cvsf)
+    #writer.writerow(['id', 'mpg'])
+    for i in range(len(id_list)):
+        writer.writerow([id_list[i], mpg_list[i]])  # 1行ずつ書き込む
+    cvsf.close()
+
+exit()
