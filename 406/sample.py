@@ -79,11 +79,18 @@ def move_okng_image(inlist, okpath, ngpath):
         else:
             newnm = okpath + nm.split('/')[-1]
         os.rename(nm,  newnm)
+        #im = Image.open(newnm)
+        #new_im  = im.filter(ImageFilter.FIND_EDGES)
+        #plt.title(newnm)
+        #plt.imshow(new_im)
+        #plt.show()
     
 # モデル作成
 def create_model(target_num, isPretrained=False):
     ## 既存のモデル(ResNet18)をロード
-    model = models.resnet18(pretrained=isPretrained)
+    #model = models.resnet18(pretrained=isPretrained)
+    #model = models.resnet34(pretrained=isPretrained)
+    model = models.resnet50(pretrained=isPretrained)
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(out_features=target_num, in_features=num_ftrs, bias=True)
     #print(model)
@@ -253,12 +260,38 @@ def main(train):
     move_okng_image(X_train, train_ok_image_path, train_ng_image_path)
     move_okng_image(X_val, val_ok_image_path, val_ng_image_path)
 
+    #return
+
     ## 解凍された画像データのデータセットを作成する
+    # ランダムグリッドシャッフル定義
+    albu_transforms_RandomGridShuffle = albumentations.Compose([
+                            albumentations.RandomGridShuffle(grid=(3, 3), p=1.0), 
+                            ])
+    # カットアウト定義
+    albu_transforms_Cutout = albumentations.Compose([
+                            albumentations.Cutout(num_holes=8, max_h_size=40, max_w_size=40, fill_value=255, p=1.0),
+                            ])
+
+    # albumentation用のデータ変換関数
+    def albumentations_transform_RandomGridShuffle(image, transform=albu_transforms_RandomGridShuffle):
+        image_np = np.array(image)
+        augmented = transform(image=image_np)
+        image = Image.fromarray(augmented['image'])
+        return image
+    def albumentations_transform_Cutout(image, transform=albu_transforms_Cutout):
+        image_np = np.array(image)
+        augmented = transform(image=image_np)
+        image = Image.fromarray(augmented['image'])
+        return image
+        
     ### transformsを定義
     data_transforms = {
         'train': transforms.Compose([
                     transforms.Resize((224, 224)),
-                    transforms.RandomHorizontalFlip(p=0.5),
+                    transforms.RandomHorizontalFlip(p=0.5), # 画像をランダムに反転
+                    #transforms.RandomVerticalFlip(p=0.5), # 画像をランダムに反転
+                    #transforms.Lambda(albumentations_transform_Cutout),
+                    #transforms.Lambda(albumentations_transform_RandomGridShuffle),
                     transforms.ToTensor(),
                     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
                 ]),
@@ -355,7 +388,8 @@ if __name__ == '__main__':
     from sklearn.metrics import confusion_matrix, classification_report
     from sklearn.preprocessing import StandardScaler
     from torchvision import datasets, models, transforms
-    from PIL import Image
+    import albumentations
+    from PIL import Image, ImageFilter
     import torch.nn as nn
     import torch.optim as optim
     import os
