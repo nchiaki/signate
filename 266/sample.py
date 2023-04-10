@@ -11,6 +11,8 @@ from sklearn.linear_model import Lasso
 from sklearn.linear_model import ElasticNet
 from sklearn.metrics import mean_squared_error as MSE
 
+learnmode = 'allofall'
+
 input_train = 'train.csv'
 input_test = 'test.csv'
 tst_sz = 0.2
@@ -96,9 +98,6 @@ def learning_models(mdlid, dftmp3, key):
             logtmp = np.log(1/dftmp3[lgnm])
             dftmp3[lgnm] = logtmp
 
-    dftmp3 = pd.get_dummies(dftmp3)
-    dftmp3 = dftmp3.fillna(0)
-
     dfexm = dftmp3.drop(columns=['y'])
     dftrgt = dftmp3['y']
     #print('dfexm', dfexm.shape)
@@ -106,6 +105,7 @@ def learning_models(mdlid, dftmp3, key):
     if (1 < len(dfexm)) and (1 < len(dftrgt)):
         X_train, X_test, y_train, y_test = train_test_split(dfexm, dftrgt, train_size=(1-tst_sz), test_size=tst_sz, random_state=rndm_stt)
         model = create_model(mdlid)
+        print('model:', type(model))
         try:
             model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
@@ -154,7 +154,7 @@ def optimization(df):
         pass
 
     try:
-        print('Bfr',df.shape)
+        #print('Bfr',df.shape)
         delix = []
         for ix, zipc in df['zipcode'].items():
             if not zipc.isdigit():
@@ -165,7 +165,7 @@ def optimization(df):
                 else:
                     df['zipcode'][ix] = zipc
         df = df.drop(delix)
-        print('Aft',df.shape)
+        #print('Aft',df.shape)
     except:
         pass
 
@@ -175,6 +175,9 @@ def optimization(df):
         except:
             pass
 
+    df = pd.get_dummies(df)
+    df = df.fillna(0)
+
     return df
 
 def do_learning(mdlid=0):
@@ -182,7 +185,6 @@ def do_learning(mdlid=0):
     global df_alone
     global models
     global nomodels
-    global alonemodels
 
     while True:
         df_prprtytyp = {}
@@ -197,9 +199,8 @@ def do_learning(mdlid=0):
         df_alone = pd.DataFrame()
         models = {}
         nomodels = []
-        alonemodels = {}
 
-        if True: # 仕分けなし
+        if learnmode == 'allofall': # 仕分けなし
             learning_models(mdlid, df_train, 'allofall')
             break
 
@@ -356,7 +357,7 @@ def do_learning(mdlid=0):
             y_pred = model.predict(X_test)
             rmse = np.sqrt(MSE(y_test, y_pred))
             modelbox = {'model': model, 'rmse': rmse}
-            alonemodels['alone'] = modelbox
+            models['alone'] = modelbox
         except:
             print('model fit error')
 
@@ -381,29 +382,75 @@ def do_learning(mdlid=0):
     for i in models:
         print(i, ':', models[i]['rmse'])
         rmses.append(models[i]['rmse'])
-    if 0 < len(alonemodels):
-        print('alone :', alonemodels['alone']['rmse'])    
-        rmses.append(alonemodels['alone']['rmse'])
     if (0 < len(rmses)):
-        print('rmses:\n', pd.DataFrame(rmses).describe())
+        print('rmses:', pd.DataFrame(rmses).describe())
     print('no model:', len(nomodels))
 
+def align_columns(dftrain, ignorclomn, dftest):
+    for trncol in dftrain.drop(columns=ignorclomn).columns:
+        if trncol not in dftest.columns:
+            dftrain.drop(trncol, axis=1, inplace=True)
+            continue
+        if dftrain[trncol].dtype != dftest[trncol].dtype:
+            dftest[trncol] = dftest[trncol].astype(dftrain[trncol].dtype)
+    for tstcol in dftest.columns:
+        if tstcol not in dftrain.columns:
+            dftest.drop(tstcol, axis=1, inplace=True)
+    return dftrain, dftest
 
+def do_predict(df):
+    global df_test
+    global models
+    for key in models:
+        print(key, ':', models[key]['rmse'])
+        model = models[key]['model']
+        print('model', type(model))
+        nwdf = df_test.copy()
+        rslt_pred = model.predict(df)
+        print('rslt_pred', type(rslt_pred), rslt_pred.shape, rslt_pred)
+        df_pred = pd.DataFrame(rslt_pred)
+        print('df_pred', type(df_pred), df_pred.shape, df_pred.head(5))
+        #nwdf['y'] = rslt_pred
+        #print('df', type(nwdf), nwdf.shape, nwdf.head(5))
+        csvfnam = 'result_' + key + '_' + str(models[key]['rmse']) + '.csv'
+        print(csvfnam)
+        #nwdf.to_csv(csvfnam, index=True)
+        df_pred.to_csv(csvfnam, header=False, index=True)
+
+print('Start here ==========================')
 logcimnm = []
 ulogcimnm = []
+dropclms = ['id', 'amenities', 'description', 'first_review', 'last_review', 'name', 'thumbnail_url', 'host_since', 'host_has_profile_pic', 'host_identity_verified', 'instant_bookable', 'cleaning_fee', 'host_response_rate','neighbourhood', 'zipcode']
+# 'bed_type', 'city', 'room_type', 'property_type', 'latitude', 'longitude', 'cancellation_policy', 'number_of_reviews', 'review_scores_rating'
+
+df_test = pd.read_csv(input_test)
+#print('df_test Bfr dropna', df_test.shape)
+df_test = df_test.dropna()
+#print('df_test Aft dropna', df_test.shape)
+df_test = df_test.drop(columns=dropclms)
+df_test = optimization(df_test)
+print('df_test:', df_test.shape)
+#exit(0)
 
 df_train = pd.read_csv(input_train)
 df_train = df_train.dropna()
-df_train = df_train.drop(columns=['id', 'amenities', 'description', 'first_review', 'last_review', 'name', 'thumbnail_url', 'host_since', 'host_has_profile_pic', 'host_identity_verified', 'instant_bookable', 'cleaning_fee', 'host_response_rate','neighbourhood', 'zipcode'])
-# 'bed_type', 'city', 'room_type', 'property_type', 'latitude', 'longitude', 'cancellation_policy', 'number_of_reviews', 'review_scores_rating'
+df_train = df_train.drop(columns=dropclms)
 df_train = optimization(df_train)
-
-print(df_train.info())
-
-#print(type(df_train['amenities']), type(df_train['amenities'][1]), df_train['amenities'].nunique())
+print('df_train:', df_train.shape)
 #exit(0)
 
+df_train, df_test = align_columns(df_train, ['y'], df_test)
+print('Test Info: ===============================\n', df_test.info())
+print("Train Info: ===============================\n", df_train.info())
+
 do_learning(0)
+do_predict(df_test)
+
 do_learning(1)
+do_predict(df_test)
+
 do_learning(2)
+do_predict(df_test)
+
 do_learning(3)
+do_predict(df_test)
