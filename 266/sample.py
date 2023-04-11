@@ -78,12 +78,16 @@ def create_model(mdlid=0):
         model = ElasticNet(alpha=0.1, l1_ratio=0.5)
     return model
 
+learnedmodels = {}
+
 def learning_models(mdlid, dftmp3, key):
     global tst_sz, rndm_stt
-    global models
     global df_alone
     global logcimnm
     global nomodels
+    global learnedmodels
+
+    learnedmodels = {}
 
     #Check_explanatory_variables(dftmp3, key)
     #print('*****************************')
@@ -102,18 +106,34 @@ def learning_models(mdlid, dftmp3, key):
     dftrgt = dftmp3['y']
     #print('dfexm', dfexm.shape)
     #print('dftrgt', dftrgt.shape)
+    if True:
+        X_train, X_test, y_train, y_test = train_test_split(dfexm, dftrgt, train_size=(1-tst_sz), test_size=tst_sz, random_state=rndm_stt)
+        model = create_model(mdlid)
+        print('model:', type(model))
+        try:
+            model.fit(X_train, y_train)
+        except Exception as er:
+            print('model.fit error:', key, er)
+            exit(0)
+        y_pred = model.predict(X_test)
+        rmse = np.sqrt(MSE(y_test, y_pred))
+        modelbox = {'model': model, 'rmse': rmse}
+        learnedmodels[key] = modelbox
+        return learnedmodels
+    
     if (1 < len(dfexm)) and (1 < len(dftrgt)):
         X_train, X_test, y_train, y_test = train_test_split(dfexm, dftrgt, train_size=(1-tst_sz), test_size=tst_sz, random_state=rndm_stt)
         model = create_model(mdlid)
         print('model:', type(model))
         try:
             model.fit(X_train, y_train)
-            y_pred = model.predict(X_test)
-            rmse = np.sqrt(MSE(y_test, y_pred))
-            modelbox = {'model': model, 'rmse': rmse}
-            models[key] = modelbox
-        except:
-            print('model.fit error')
+        except Exception as er:
+            print('model.fit error:', key, er)
+            exit(0)
+        y_pred = model.predict(X_test)
+        rmse = np.sqrt(MSE(y_test, y_pred))
+        modelbox = {'model': model, 'rmse': rmse}
+        learnedmodels[key] = modelbox
     else:
         nomodels.append(key)
         df_alone = pd.concat([df_alone, dftmp3])
@@ -128,50 +148,114 @@ def optimization(df):
     except:
         pass
 
-    try:
-        anmtysrs = df['amenities'].str.replace('{', '').str.replace('}', '').str.replace('"', '').str.split(',')
-        #print('Bfr anmtysrs', len(anmtysrs), type(anmtysrs[1]), anmtysrs[1])
-        for ix, anmtys in anmtysrs.items():
-            anmtys = sorted(anmtys)
-            lpf = True
-            while lpf:
-                lpf = False
-                for anmty in anmtys:
-                    if 'translation missing' in anmty:
-                        anmtys.remove(anmty)
-                        anmtysrs[ix] = anmtys
-                        lpf = True
-
-        for ix, lst in anmtysrs.items():
-            strbf = ''
-            for anmty in lst:
-                strbf += anmty
-            anmtysrs[ix] = strbf.replace(' ', '')
-
-        #print('Aft anmtysrs', len(anmtysrs), type(anmtysrs[1]), anmtysrs[1])
-        df['amenities'] = anmtysrs
+    try:    
+        df['host_identity_verified'] = df['host_identity_verified'].replace({'t': 1, 'f': 0})
     except:
         pass
 
     try:
-        #print('Bfr',df.shape)
-        delix = []
-        for ix, zipc in df['zipcode'].items():
-            if not zipc.isdigit():
-                zipc = zipc.replace('.0', '')
-                if not zipc.isdigit():
-                    #print(ix, type(zipc), zipc)
-                    delix.append(ix)
-                else:
-                    df['zipcode'][ix] = zipc
-        df = df.drop(delix)
-        #print('Aft',df.shape)
+        df['instant_bookable'] = df['instant_bookable'].replace({'t': 1, 'f': 0})
+    except:
+        pass
+
+    try:
+        df['host_response_rate'] = df['host_response_rate'].str.replace('%', '').astype(float)  # 0.0 ~ 100.0
+    except:
+        pass
+
+    try:
+        #df['host_since'] = df['host_since'].str.replace('-', '').astype(int)  # 2008 ~ 2016
+        df['host_since'] = '0'.astype(int)
+    except:
+        pass
+
+    try:
+        df['neighbourhood'] = 'neighbourhood'
+    except:
+        pass
+
+    try:
+        df['thumbnail_url'] = 'thumbnail_url'
+    except:
+        pass
+
+    try:
+        df['description'] = 'description'
+    except:
+        pass
+
+    try:
+        df['name'] = 'name'
+    except:
+        pass
+
+    try:
+        df['city'] = 'city'
     except:
         pass
 
     if False:
         try:
+            anmtysrs = df['amenities'].str.replace('{', '').str.replace('}', '').str.replace('"', '').str.split(',')
+            #print('Bfr anmtysrs', len(anmtysrs), type(anmtysrs[1]), anmtysrs[1])
+            for ix, anmtys in anmtysrs.items():
+                anmtys = sorted(anmtys)
+                lpf = True
+                while lpf:
+                    lpf = False
+                    for anmty in anmtys:
+                        if 'translation missing' in anmty:
+                            anmtys.remove(anmty)
+                            anmtysrs[ix] = anmtys
+                            lpf = True
+
+            for ix, lst in anmtysrs.items():
+                strbf = ''
+                for anmty in lst:
+                    strbf += anmty
+                anmtysrs[ix] = strbf.replace(' ', '')
+
+            #print('Aft anmtysrs', len(anmtysrs), type(anmtysrs[1]), anmtysrs[1])
+            df['amenities'] = anmtysrs
+        except:
+            pass
+    else:
+        try:
+            df['amenities'] = 'amenities'
+        except:
+            pass
+
+    if False:
+        try:
+            #print('Bfr',df.shape)
+            delix = []
+            for ix, zipc in df['zipcode'].items():
+                if not zipc.isdigit():
+                    zipc = zipc.replace('.0', '')
+                    if not zipc.isdigit():
+                        #print(ix, type(zipc), zipc)
+                        delix.append(ix)
+                    else:
+                        df['zipcode'][ix] = zipc
+            df = df.drop(delix)
+            #print('Aft',df.shape)
+        except:
+            pass
+    else:
+        try:
+            df['zipcode'] = '0000000'
+        except:
+            pass
+
+
+    if False:
+        try:
             df['host_response_rate'] = df['host_response_rate'].str.replace('%', '').astype(float) /100.0
+        except:
+            pass
+    else:
+        try:
+            df['host_response_rate'] = 0.0
         except:
             pass
 
@@ -180,211 +264,135 @@ def optimization(df):
 
     return df
 
-def do_learning(mdlid=0):
+def ready_exam_data(df, clms, target=False):
+    df_tmp_train = pd.DataFrame()
+    checkedclm = []
+    for clm in clms:
+        if clm not in checkedclm:
+            df_tmp_train[clm] = df[clm]
+            checkedclm.append(clm)
+        else:
+            continue
+    if target:
+        df_tmp_train['y'] = df['y']
+    df_tmp_train = pd.get_dummies(df_tmp_train)
+    return df_tmp_train
+
+def do_new_learning(mdlid=0):
     global df_train
-    global df_alone
-    global models
-    global nomodels
+    learn_ignor_colums = ['y', 'id', 'amenities', 'description', 'name', 'thumbnail_url', 'property_type', 'host_response_rate', 'last_review', 'first_review', 'neighbourhood', 'zipcode', 'host_since']
+    minclm = []
+    minclm.append('')
+    minrmse = []
+    minrmse.append(9999999999999)
 
+    # train内のカラムを{'model':None,'rmse':<初期値>}と共に初期値として作成し
+    # {column:{'model':None,'rmse':<初期値>}}としてmodeltblに格納する
+    tmpmodels = {}
+    for clm in df_train.columns:
+        tmpmodels[clm] = {'model':None, 'rmse': 9999999999999}
+    modeltbl = []
+    modeltbl.append(tmpmodels)
+
+    #print(modeltbl)
+
+    tbx = 0
     while True:
-        df_prprtytyp = {}
-        df_roomtyp = {}
-        df_roomtyp_accmmdts = {}
-        df_accmmdts = {}
-        df_accmmdts_until_5 = pd.DataFrame()
-        df_accmmdts_over_6 = pd.DataFrame()
-        df_accmmdts_bdrms = {}
-        df_accmmdts_bdrms_bds = {}
-        df_accmmdts_bdrms_bds_bthrms = {}
-        df_alone = pd.DataFrame()
         models = {}
-        nomodels = []
-
-        if learnmode == 'allofall': # 仕分けなし
-            learning_models(mdlid, df_train, 'allofall')
-            break
-
-        if True: # room_typeで仕分け
-            for i in df_train['room_type'].unique().tolist():
-                df_roomtyp[i] = pd.DataFrame(df_train[df_train['room_type'] == i])
-                dftmp = df_roomtyp[i]
-
-                if False:
-                    key = str(i)
-                    print(key, dftmp.shape)
-                    learning_models(mdlid, dftmp, key)
-                    continue;
-            
-                for j in dftmp['accommodates'].unique().tolist():
-
-                    if True:
-                        if j <= 5:
-                            key = str(i) + '/until5'
-                            try:
-                                df_accmmdts_until_5 = df_roomtyp_accmmdts[key]
-                            except:
-                                df_roomtyp_accmmdts[key] = pd.DataFrame()
-                            df_accmmdts_until_5 = pd.concat([df_accmmdts_until_5, dftmp[dftmp['accommodates'] == j]])
-                            df_roomtyp_accmmdts[key] = df_accmmdts_until_5
-                            df_accmmdts_until_5 = pd.DataFrame()
+        # tbx回目の{column:{'model':None,'rmse':<初期値>}}を取得し
+        # その中でrmseが最小のcolumnを取得する
+        tmpmdl = modeltbl[tbx]
+        #print('\n[{}]:While start minclm:'.format(tbx), minclm, 'tmpmdl:', type(tmpmdl), tmpmdl)
+        #for clm in df_train.columns:
+        found_flg = False
+        for dkey in tmpmdl:
+            #print('[{}]:Target column:'.format(tbx), dkey)
+            clmlst = dkey.split('/')
+            clm = clmlst[len(clmlst)-1]
+            # 処理対象外、或いは既に学習済みのカラムは無視する
+            if clm not in learn_ignor_colums:
+                df_tmp_train = pd.DataFrame()
+                key = ''
+                if 0 < tbx:
+                    # 2回目以降の学習の場合は、初回からの有効なカラム名をkeyとして使用し、
+                    # そのカラムデータをdf_tmp_trainに格納していく
+                    #print('[{}]MakeKey:'.format(tbx), end='')
+                    for ix in range(tbx+1):
+                        if ix <= (tbx - 1):
+                            #print('[{}:{}]'.format(ix,minclm[ix]), end='')
+                            # 今回迄のカラムデータをdf_tmp_trainに格納し、学習時のkeyを構築する
+                            df_tmp_train[minclm[ix]] = df_train[minclm[ix]]
+                            if ix == 0:
+                                key = minclm[ix]
+                            else:
+                                key = key + '/' + minclm[ix]
                         else:
-                            key = str(i) + '/over6'
-                            try:
-                                df_accmmdts_over_6 = df_roomtyp_accmmdts[key]
-                            except:
-                                df_roomtyp_accmmdts[key] = pd.DataFrame()
-                            df_accmmdts_over_6 = pd.concat([df_accmmdts_over_6, dftmp[dftmp['accommodates'] == j]])
-                            df_roomtyp_accmmdts[key] = df_accmmdts_over_6
-                            df_accmmdts_over_6 = pd.DataFrame()
-                        continue
+                            #print('[{}:clm:{}]'.format(ix,clm), end='')
+                            # 今回のカラムデータをdf_tmp_trainに格納し、学習時のkeyを構築する
+                            df_tmp_train[clm] = df_train[clm]
+                            key = key + '/' + clm
+                        #print(key, end='')
+                    #print('')
+                else:
+                    # 初めての学習の場合は、カラム名をkeyとして使用し、
+                    # そのカラムデータをdf_tmp_trainに格納する
+                    key = clm
+                    df_tmp_train[clm] = df_train[clm]
+                # 目的変数yをdf_tmp_trainに格納する
+                df_tmp_train['y'] = df_train['y']
+                # 質的変数をダミー変数に変換する
+                df_tmp_train = pd.get_dummies(df_tmp_train)
 
-                    df_accmmdts[j] = pd.DataFrame(dftmp[dftmp['accommodates'] == j])
-                    dftmp1 = df_accmmdts[j]
+                # 学習し、その結果のモデルとRMSEを取得する
+                #print('learning_models:', key)
+                rtnmdl = learning_models(mdlid, df_tmp_train, key)
 
-                    if True:
-                        key = str(i) + '/' + str(j)
-                        print(key, dftmp1.shape)
-                        learning_models(mdlid, dftmp1, key)
-                        continue
-            break;
-        
-        if False: # property_type, room_type, accommodatesで仕分け
-            for i in df_train['property_type'].unique().tolist():
-                df_prprtytyp[i] = pd.DataFrame(df_train[df_train['property_type'] == i])
-                dftmp = df_prprtytyp[i]
+                # 取得したRMSEが最小ならばその値と、その時のカラム名を記憶する
+                #print('rtnmdl:', rtnmdl)
+                tmprmse = rtnmdl[key]['rmse']
+                if tmprmse < minrmse[tbx]:
+                    #print('Compare:', clm, 'Old', minrmse[tbx], '<- New', tmprmse)
+                    minrmse[tbx] = tmprmse
+                    minclm[tbx] = clm
+                    found_flg = True
+                # 学習結果をmodelsに格納する
+                models.update(rtnmdl)
+            else:
+                #print('Ignore column:', clm)
+                continue
 
-                if False:
-                    key = str(i)
-                    print(key, dftmp.shape)
-                    learning_models(mdlid, dftmp, key)
-                    continue
-
-                for j in dftmp['room_type'].unique().tolist():
-                    df_roomtyp[j] = pd.DataFrame(dftmp[dftmp['room_type'] == j])
-                    dftmp1 = df_roomtyp[j]
-
-                    if False:
-                        key = str(i) + '/' + str(j)
-                        print(key, dftmp1.shape)
-                        learning_models(mdlid, dftmp1, key)
-                        continue
-
-                    for k in dftmp1['accommodates'].unique().tolist():
-                        df_accmmdts[k] = pd.DataFrame(dftmp1[dftmp1['accommodates'] == k])
-                        dftmp2 = df_accmmdts[k]
-
-                        if True:
-                            key = str(i) + '/' + str(j) + '/' + str(k)
-                            print(key, dftmp.shape)
-                            learning_models(mdlid, dftmp2, key)
-                            continue
-
+        # 最小のRMSEが初期値のままならば、学習終了
+        if found_flg == False:
+            #for ix in range(tbx+1):
+                #print('minclm[{}]:'.format(ix), minclm[ix])
+                #print('minrmse[{}]:'.format(ix), minrmse[ix])
+            #print(tmpmdl)
+            #for key in tmpmdl:
+                #print('tmpmdl[{}]:'.format(key), tmpmdl[key])
+                #break;
+            #print("学習終了")
+            df_tmp_train = ready_exam_data(df_train, minclm, target=True)
+            rtnmdl = learning_models(mdlid, df_tmp_train, "bestofall")
+            print("学習終了:最終結果",rtnmdl)
+            return minclm
             break
 
-        if False: # accommodates, bedrooms, beds, bathroomsで仕分け
-            for i in df_train['accommodates'].unique().tolist():
+        print('[{}]minclm:'.format(tbx), minclm)
+        print('[{}]minrmse:'.format(tbx), minrmse)
 
-                if False:
-                    if i <= 5:
-                        #print('under 5',i)
-                        df_accmmdts_until_5 = pd.concat([df_accmmdts_until_5, df_train[df_train['accommodates'] == i]])
-                        continue
-                    else:
-                        #print('over 6',i)
-                        df_accmmdts_over_6 = pd.concat([df_accmmdts_over_6, df_train[df_train['accommodates'] == i]])
-                        continue
+        # 取得した{key:{'model':<モデル>,'rmse':<RMSE>}}をRESEでソートし、
+        # その中でRMSEが最小のkeyを取得する
+        tmpmodels = sorted(models.items(), key=lambda x:x[1]['rmse'])
+        tmpmodels = dict(tmpmodels)
 
-                df_accmmdts[i] = pd.DataFrame(df_train[df_train['accommodates'] == i])
-                dftmp = df_accmmdts[i]
+        # 学習済みのカラムを記憶する
+        learn_ignor_colums.append(minclm[tbx])
+        modeltbl.append(tmpmodels)
+        minclm.append(minclm[tbx])
+        minrmse.append(minrmse[tbx])
 
-                if True:
-                    key = str(i)
-                    learning_models(mdlid, dftmp, key)
-                    continue
+        tbx += 1
 
-                for j in dftmp['bedrooms'].unique().tolist():
-                    df_accmmdts_bdrms[j] = pd.DataFrame(dftmp[dftmp['bedrooms'] == j])
-                    dftmp1 = df_accmmdts_bdrms[j]
-
-                    if True:
-                        key = str(i) + '_' + str(j)
-                        learning_models(mdlid, dftmp1, key)
-                        continue
-
-                    for k in dftmp1['beds'].unique().tolist():
-                        df_accmmdts_bdrms_bds[k] = pd.DataFrame(dftmp1[dftmp1['beds'] == k])
-                        dftmp2 = df_accmmdts_bdrms_bds[k]
-
-                        if True:
-                            key = str(i) + '_' + str(j) + '_' + str(k)
-                            learning_models(mdlid, dftmp2, key)
-                            continue
-
-                        for l in dftmp2['bathrooms'].unique().tolist():
-                            df_accmmdts_bdrms_bds_bthrms[l] = pd.DataFrame(dftmp2[dftmp2['bathrooms'] == l])
-                            dftmp3 = df_accmmdts_bdrms_bds_bthrms[l]
-                            key = str(i) + '_' + str(j) + '_' + str(k) + '_' + str(l)
-                            learning_models(mdlid, dftmp3, key)
-            break
-
-    print('df_roomtyp_accmmdts', len(df_roomtyp_accmmdts))
-    for key in df_roomtyp_accmmdts.keys():
-        df = df_roomtyp_accmmdts[key]
-        print(key, type(df), df.shape)
-        if 0 < len(df):
-            learning_models(mdlid, df, key)
-
-    if 0 < len(df_accmmdts_until_5):
-        print('df_accmmdts_until_5', df_accmmdts_until_5.shape)
-        learning_models(mdlid, df_accmmdts_until_5, 'until5')
-
-    if 0 < len(df_accmmdts_over_6):
-        print('df_accmmdts_over_6', df_accmmdts_over_6.shape)
-        learning_models(mdlid, df_accmmdts_over_6, 'over6')
-
-
-    if 0 < len(df_alone):
-        df_alone = df_alone.fillna(0)
-        #print('df_alone shape', df_alone.shape)
-        #print(df_alone)
-        dfexm = df_alone.drop(columns=['y'])
-        dftrgt = df_alone['y']
-        print('dfexm', dfexm.shape, 'dftrgt', dftrgt.shape)
-        X_train, X_test, y_train, y_test = train_test_split(dfexm, dftrgt, train_size=(1-tst_sz), test_size=tst_sz, random_state=rndm_stt)
-        model = create_model(mdlid)
-        try:
-            model.fit(X_train, y_train)
-            y_pred = model.predict(X_test)
-            rmse = np.sqrt(MSE(y_test, y_pred))
-            modelbox = {'model': model, 'rmse': rmse}
-            models['alone'] = modelbox
-        except:
-            print('model fit error')
-
-    if 0 < len(df_prprtytyp):
-        print('df_prprtytyp', len(df_prprtytyp))
-    if 0 < len(df_roomtyp):
-        print('df_roomtyp', len(df_roomtyp))
-    if 0 < len(df_accmmdts):
-        print('df_accmmdts', len(df_accmmdts))
-    if 0 < len(df_accmmdts_until_5):
-        print('df_accmmdts_until_5', len(df_accmmdts_until_5))
-    if 0 < len(df_accmmdts_over_6):
-        print('df_accmmdts_over_6', len(df_accmmdts_over_6))
-    if 0 < len(df_accmmdts_bdrms):
-        print('df_accmmdts_bdrms', len(df_accmmdts_bdrms))
-    if 0 < len(df_accmmdts_bdrms_bds):
-        print('df_accmmdts_bdrms_bds', len(df_accmmdts_bdrms_bds))
-    if 0 < len(df_accmmdts_bdrms_bds_bthrms):
-        print('df_accmmdts_bdrms_bds_bthrms', len(df_accmmdts_bdrms_bds_bthrms))
-
-    rmses = [] 
-    for i in models:
-        print(i, ':', models[i]['rmse'])
-        rmses.append(models[i]['rmse'])
-    if (0 < len(rmses)):
-        print('rmses:', pd.DataFrame(rmses).describe())
-    print('no model:', len(nomodels))
 
 def align_columns(dftrain, ignorclomn, dftest):
     for trncol in dftrain.drop(columns=ignorclomn).columns:
@@ -398,21 +406,24 @@ def align_columns(dftrain, ignorclomn, dftest):
             dftest.drop(tstcol, axis=1, inplace=True)
     return dftrain, dftest
 
-def do_predict(df):
+def do_new_predict(df, minclm):
     global df_test
-    global models
-    for key in models:
-        print(key, ':', models[key]['rmse'])
-        model = models[key]['model']
+    global learnedmodels
+
+    for key in learnedmodels:
+        print(key, ':', learnedmodels[key]['rmse'])
+        model = learnedmodels[key]['model']
         print('model', type(model))
-        nwdf = df_test.copy()
-        rslt_pred = model.predict(df)
+
+        df_tmp_train = ready_exam_data(df, minclm)
+        
+        rslt_pred = model.predict(df_tmp_train)
         print('rslt_pred', type(rslt_pred), rslt_pred.shape, rslt_pred)
         df_pred = pd.DataFrame(rslt_pred)
         print('df_pred', type(df_pred), df_pred.shape, df_pred.head(5))
         #nwdf['y'] = rslt_pred
         #print('df', type(nwdf), nwdf.shape, nwdf.head(5))
-        csvfnam = 'result_' + key + '_' + str(models[key]['rmse']) + '.csv'
+        csvfnam = 'result_' + key + '_' + str(learnedmodels[key]['rmse']) + '.csv'
         print(csvfnam)
         #nwdf.to_csv(csvfnam, index=True)
         df_pred.to_csv(csvfnam, header=False, index=True)
@@ -424,18 +435,24 @@ dropclms = ['id', 'amenities', 'description', 'first_review', 'last_review', 'na
 # 'bed_type', 'city', 'room_type', 'property_type', 'latitude', 'longitude', 'cancellation_policy', 'number_of_reviews', 'review_scores_rating'
 
 df_test = pd.read_csv(input_test)
-#print('df_test Bfr dropna', df_test.shape)
+for key in df_test:
+    if df_test[key].dtype == object:
+        df_test[key] = df_test[key].fillna('unknown')
+    else:
+        df_test[key] = df_test[key].fillna(0)
 df_test = df_test.dropna()
-#print('df_test Aft dropna', df_test.shape)
-df_test = df_test.drop(columns=dropclms)
-df_test = optimization(df_test)
+#df_test = optimization(df_test)
 print('df_test:', df_test.shape)
 #exit(0)
 
 df_train = pd.read_csv(input_train)
+for key in df_train:
+    if df_train[key].dtype == object:
+        df_train[key] = df_train[key].fillna('unknown')
+    else:
+        df_train[key] = df_train[key].fillna(0)
 df_train = df_train.dropna()
-df_train = df_train.drop(columns=dropclms)
-df_train = optimization(df_train)
+#df_train = optimization(df_train)
 print('df_train:', df_train.shape)
 #exit(0)
 
@@ -443,14 +460,11 @@ df_train, df_test = align_columns(df_train, ['y'], df_test)
 print('Test Info: ===============================\n', df_test.info())
 print("Train Info: ===============================\n", df_train.info())
 
-do_learning(0)
-do_predict(df_test)
-
-do_learning(1)
-do_predict(df_test)
-
-do_learning(2)
-do_predict(df_test)
-
-do_learning(3)
-do_predict(df_test)
+minclm = do_new_learning(0)
+do_new_predict(df_test, minclm)
+minclm = do_new_learning(1)
+do_new_predict(df_test, minclm)
+minclm = do_new_learning(2)
+do_new_predict(df_test, minclm)
+minclm = do_new_learning(3)
+do_new_predict(df_test, minclm)
