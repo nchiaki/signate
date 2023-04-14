@@ -143,6 +143,7 @@ def optimization(df):
         df['cleaning_fee'] = df['cleaning_fee'].replace({'t': 1, 'f': 0})
     except:
         pass
+
     try:
         df['host_has_profile_pic'] = df['host_has_profile_pic'].replace({'t': 1, 'f': 0})
     except:
@@ -158,16 +159,30 @@ def optimization(df):
     except:
         pass
 
+    if True:
+        try:
+            df['host_response_rate'] = df['host_response_rate'].str.replace('%', '').astype(float)  # 0.0 ~ 100.0
+        except:
+            pass
+    else:
+        try:
+            df['host_response_rate'] = 0.0
+        except:
+            pass
+
     try:
-        df['host_response_rate'] = df['host_response_rate'].str.replace('%', '').astype(float)  # 0.0 ~ 100.0
+        df['host_since'] = df['host_since'].str.replace('-', '').astype(int)  # 2008 ~ 2016
     except:
         pass
 
     try:
-        #df['host_since'] = df['host_since'].str.replace('-', '').astype(int)  # 2008 ~ 2016
-        df['host_since'] = '0'.astype(int)
+        zzz = df['zipcode'].str.contains('\n', na=False)
+        df['zipcode'][zzz] = '00000'.astype(type(df['zipcode'][zzz]))
     except:
         pass
+
+    df = pd.get_dummies(df)
+    return df
 
     try:
         df['neighbourhood'] = 'neighbourhood'
@@ -247,19 +262,6 @@ def optimization(df):
         except:
             pass
 
-
-    if False:
-        try:
-            df['host_response_rate'] = df['host_response_rate'].str.replace('%', '').astype(float) /100.0
-        except:
-            pass
-    else:
-        try:
-            df['host_response_rate'] = 0.0
-        except:
-            pass
-
-    df = pd.get_dummies(df)
     df = df.fillna(0)
 
     return df
@@ -280,7 +282,8 @@ def ready_exam_data(df, clms, target=False):
 
 def do_new_learning(mdlid=0):
     global df_train
-    learn_ignor_colums = ['y', 'id', 'amenities', 'description', 'name', 'thumbnail_url', 'property_type', 'host_response_rate', 'last_review', 'first_review', 'neighbourhood', 'zipcode', 'host_since']
+    learn_ignor_colums = ['y', 'id', 'amenities', 'description', 'name', 'thumbnail_url', 'property_type', 'host_response_rate', 'last_review', 'first_review', 'neighbourhood', 'host_since', 'zipcode']
+    # 
     minclm = []
     minclm.append('')
     minrmse = []
@@ -341,7 +344,8 @@ def do_new_learning(mdlid=0):
                 # 目的変数yをdf_tmp_trainに格納する
                 df_tmp_train['y'] = df_train['y']
                 # 質的変数をダミー変数に変換する
-                df_tmp_train = pd.get_dummies(df_tmp_train)
+                df_tmp_train = optimization(df_tmp_train)
+                #df_tmp_train = pd.get_dummies(df_tmp_train)
 
                 # 学習し、その結果のモデルとRMSEを取得する
                 #print('learning_models:', key)
@@ -428,31 +432,26 @@ def do_new_predict(df, minclm):
         #nwdf.to_csv(csvfnam, index=True)
         df_pred.to_csv(csvfnam, header=False, index=True)
 
+def changena(df):
+    for key in df:
+        if df[key].dtype == object:
+            df[key] = df[key].fillna('unknown')
+        else:
+            df[key] = df[key].fillna(0)
+    df = df.dropna()
+    return df
+
 print('Start here ==========================')
 logcimnm = []
 ulogcimnm = []
-dropclms = ['id', 'amenities', 'description', 'first_review', 'last_review', 'name', 'thumbnail_url', 'host_since', 'host_has_profile_pic', 'host_identity_verified', 'instant_bookable', 'cleaning_fee', 'host_response_rate','neighbourhood', 'zipcode']
-# 'bed_type', 'city', 'room_type', 'property_type', 'latitude', 'longitude', 'cancellation_policy', 'number_of_reviews', 'review_scores_rating'
 
 df_test = pd.read_csv(input_test)
-for key in df_test:
-    if df_test[key].dtype == object:
-        df_test[key] = df_test[key].fillna('unknown')
-    else:
-        df_test[key] = df_test[key].fillna(0)
-df_test = df_test.dropna()
-#df_test = optimization(df_test)
+df_test = changena(df_test)
 print('df_test:', df_test.shape)
 #exit(0)
 
 df_train = pd.read_csv(input_train)
-for key in df_train:
-    if df_train[key].dtype == object:
-        df_train[key] = df_train[key].fillna('unknown')
-    else:
-        df_train[key] = df_train[key].fillna(0)
-df_train = df_train.dropna()
-#df_train = optimization(df_train)
+df_train = changena(df_train)
 print('df_train:', df_train.shape)
 #exit(0)
 
